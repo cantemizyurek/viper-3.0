@@ -10,7 +10,7 @@ Viper is a hacking shell tool for game named Grey Hack. It is used to automate s
 
 ## How to Install?
 
-You can build this project from source or download the pre-built binaries from the (game website url) website(in game).
+You can build this project from source or download the pre-built binaries from the www.openviper.com website(in game).
 
 ## Contributing
 
