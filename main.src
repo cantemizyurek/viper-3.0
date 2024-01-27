@@ -1,0 +1,84 @@
+import_code("./libs/yargs/command-manager.src")
+import_code("./libs/yargs/command.src")
+import_code("./mediator.src")
+import_code("./managers/session/session-manager.src")
+import_code("./managers/session/session.src")
+import_code("./managers/lib/lib-manager.src")
+import_code("./managers/lib/metaxploit-manager.src")
+import_code("./libs/error.src")
+import_code("./libs/viper-ui.src")
+import_code("./libs/functional.src")
+import_code("./facades/network/router.src")
+
+extensionMediator = ExtensionMediator.New()
+
+commandManager = CommandManager.New()
+extensionMediator.addExtension("commandManager", commandManager)
+sessionManager = SessionManager.New()
+extensionMediator.addExtension("sessionManager", sessionManager)
+libManager = LibManager.New()
+extensionMediator.addExtension("libManager", libManager)
+metaxploitManager = MetaxploitManager.New()
+extensionMediator.addExtension("metaxploitManager", metaxploitManager)
+
+import_code("./commands.src")
+
+init = function()
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    libManager = extensionMediator.getExtension("libManager")
+    sessionManager.addSession(get_shell())
+
+    libManager = extensionMediator.getExtension("libManager")
+    metaxploit = sessionManager.currentSession.handler.getFile("metaxploit.so")
+    if metaxploit isa Error then metaxploit = sessionManager.currentSession.handler.getFile("/lib/metaxploit.so")
+    if not (metaxploit isa Error) then
+        meta = include_lib(metaxploit.path)
+        if meta != null then
+            libManager.addLib(meta, { 
+                "ip": sessionManager.currentSession.data.ip,
+                "path": metaxploit.path(),
+            })
+        end if
+    end if
+
+    cryptoFile = sessionManager.currentSession.handler.getFile("crypto.so")
+    if cryptoFile isa Error then cryptoFile = sessionManager.currentSession.handler.getFile("/lib/crypto.so")
+    if not (cryptoFile isa Error) then
+        crypto = include_lib(cryptoFile.path)
+        if crypto != null then
+            libManager.addLib(crypto, { 
+                "ip": sessionManager.currentSession.data.ip,
+                "path": cryptoFile.path(),
+            })
+        end if
+    end if
+
+    clear_screen()
+    ViperUi.init()
+
+    currentLibs = libManager.currentLibs
+    listCurrentLibs = []
+    for lib in currentLibs
+        listCurrentLibs.push(lib.value)
+    end for
+    ViperUi.currentLibs(listCurrentLibs)
+end function
+
+main = function()
+    sessionManager = extensionMediator.getExtension("sessionManager")
+
+    userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
+    commandManager = extensionMediator.getExtension("commandManager")
+    commandName = userInput.split(" ")[0]
+    args = slice(userInput.split(" "), 1).join(" ")
+    resultOfExecution = commandManager.executeCommand(commandName, args)
+
+    if resultOfExecution isa Error then return print(resultOfExecution.message)
+    if resultOfExecution != null then return print(resultOfExecution)
+end function
+
+init()
+
+while(true)
+    main()
+end while

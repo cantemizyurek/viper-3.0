@@ -1,0 +1,46 @@
+import_code("../error.src")
+import_code("../functional.src")
+
+Command = {}
+Command.name = null
+Command.description = null
+Command.parameters = []
+Command.callback = null
+Command.execute = function(args)
+    parameters = self.parseArgsToParameters(args.split(" "))
+    if parameters isa Error then return parameters
+    return self.callback(parameters)
+end function
+Command.help = function()
+    help = self.name + " "
+    for param in self.parameters
+        if param.required then help = help +  "<" + param.name + "> "
+        if not(param.required) then help = help + "[" + param.name + "] "
+    end for
+    help = help + self.description
+    return help
+end function
+Command.parseArgsToParameters = function(args)
+    parameters = {}
+    handleRemoveEmpty = function(value)
+        return value != ""
+    end function
+    args = filter(args, @handleRemoveEmpty)
+    if self.parameters.len() == 0 then return parameters
+    for i in range(0, self.parameters.len() - 1)
+        param = self.parameters[i]
+        parameters[param.name] = null
+        if args.hasIndex(i) then parameters[param.name] = args[i]
+        if param.required and parameters[param.name] == null then return Error.New("Missing required parameter: " + param.name)
+        if param.hasIndex("default") and parameters[param.name] == null then parameters[param.name] = param.default
+    end for
+    return parameters
+end function
+Command.New = function(options)
+    command = new Command
+    command.name = options.name
+    command.description = options.description
+    command.parameters = options.parameters
+    command.callback = @options.callback
+    return command
+end function

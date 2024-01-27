@@ -1,0 +1,29 @@
+import_code("../error.src")
+import_code("../functional.src")
+
+CommandManager = {}
+CommandManager.commands = {}
+CommandManager.mediator = null
+CommandManager.getCommand = function(command)
+    if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
+    return self.commands[command]
+end function
+CommandManager.executeCommand = function(command,args)
+    if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
+    command = self.commands[command]
+    return command.execute(args)
+end function
+CommandManager.registerCommand = function(command)
+    self.commands[command.name] = command
+end function
+CommandManager.unregisterCommand = function(command)
+    self.commands[command.name] = null
+end function
+CommandManager.setMediator = function(mediator)
+    self.mediator = mediator
+end function
+CommandManager.New = function()
+    result = new CommandManager
+    result.commands = {}
+    return result
+end function

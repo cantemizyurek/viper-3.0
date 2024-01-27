@@ -1,0 +1,21 @@
+jumpfileText = "
+getLib = function (path)
+    return include_lib(path)
+end function
+
+loginAs = function (user, pass)
+    return get_shell(user, pass)
+end function
+
+type = params[0]
+
+if type == ""login"" then
+    user = params[1]
+    pass = params[2]
+    result = loginAs(user, pass)
+    get_custom_object.user = result
+else if type == ""getLib"" then
+    path = params[1]
+    result = getLib(path)
+    get_custom_object.lib = result
+end if"

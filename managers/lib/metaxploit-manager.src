@@ -1,0 +1,38 @@
+import_code("../../libs/error.src")
+import_code("./lib-manager.src")
+
+MetaxploitManager = {}
+MetaxploitManager.mediator = null
+MetaxploitManager.getLib = function (address, port)
+    libManager = self.mediator.getExtension("libManager")
+    currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
+    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
+    return currentMetaxploit.getLib(address, port)
+end function
+MetaxploitManager.hack = function (address, port, options)
+    libManager = self.mediator.getExtension("libManager")
+    currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
+    pivotMetaxploit = libManager.getPivotLib(LIB_TYPES.METAXPLOIT).lib
+    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
+    if pivotMetaxploit == null then return Error.New("No metaxploit library loaded")
+    if is_valid_ip(address) == false then
+        sessionManager = self.mediator.getExtension("sessionManager")
+        session = sessionManager.currentSession
+        handler = session.handler
+        address = handler.getFile(address)
+        if address isa Error then return address
+        address = address.path()
+    end if
+    lib = currentMetaxploit.getLib(address, port)
+    if lib isa Error then return lib
+    if is_valid_ip(port) then options = port
+    return pivotMetaxploit.hack(lib, options)
+end function
+MetaxploitManager.setMediator = function (mediator)
+    self.mediator = mediator
+end function
+MetaxploitManager.New = function ()
+    self = new MetaxploitManager
+    self.mediator = null
+    return self
+end function

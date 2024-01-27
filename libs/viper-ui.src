@@ -1,0 +1,288 @@
+import_code("../facades/computer-objects/file.src")
+import_code("./functional.src")
+
+COLORS = {
+    "RED": "#c3201f",
+    "GREEN": "#0f0",
+    "YELLOW": "#FFFC33",
+    "BLUE": "#058FAB",
+    "GRAY": "#343434"
+}
+
+addSpaceString = function (string, spaces)
+    for i in range(0, spaces - 1)
+        string = string + " "
+    end for
+    return string
+end function
+
+viperCoolText = "
+<color=#343434>##################################################</color>
+<color=#343434>#                                                #</color>
+<color=#343434>#</color>        <color=#c3201f>        @@@@@@      @@@@@@              </color><color=#343434>#</color>
+<color=#343434>#</color>        <color=#c3201f>            @@!    @@!  @@@             </color><color=#343434>#</color>
+<color=#343434>#</color>        <color=#c3201f>         @!!!:     @!@  !@!             </color><color=#343434>#</color>
+<color=#343434>#</color>        <color=#c3201f>            !!:    !!:  !!!             </color><color=#343434>#</color>
+<color=#343434>#</color>        <color=#c3201f>        ::: ::  ::  : : ::              </color><color=#343434>#</color>
+<color=#343434>#                                                #</color>
+<color=#343434>#</color>      <color=#c3201f>____   ____.__                            </color><color=#343434>#</color>
+<color=#343434>#</color>      <color=#c3201f>\   \ /   /|__|_____   ___________        </color><color=#343434>#</color>
+<color=#343434>#</color>      <color=#c3201f> \   Y   / |  \____ \_/ __ \_  __ \       </color><color=#343434>#</color>
+<color=#343434>#</color>      <color=#c3201f>  \     /  |  |  |_> >  ___/|  | \/       </color><color=#343434>#</color>
+<color=#343434>#</color>      <color=#c3201f>   \___/   |__|   __/ \___  >__|          </color><color=#343434>#</color>
+<color=#343434>#</color>      <color=#c3201f>              |__|        \/              </color><color=#343434>#</color>
+<color=#343434>#                                                #</color>
+<color=#343434>#</color> <color=#fff>Created by: <s>Volk</s> SkidMall</color>                      <color=#343434>#</color>
+<color=#343434>##################################################</color>"
+
+displayTable = function (keys, items)
+    longestItemPerKey = {}
+
+    for key in keys
+        longestItemPerKey[key] = key.len
+    end for
+
+    for item in items
+        for key in keys
+            if item[key].text.len > longestItemPerKey[key] then longestItemPerKey[key] = item[key].text.len
+        end for
+    end for
+
+    keysString = ""
+    for key in keys
+        keysString = keysString + "<color=" + COLORS["RED"] + ">" + addSpaceString(key.upper(), longestItemPerKey[key] - key.len + 2) + "</color>"
+    end for
+    print keysString
+
+    seperatorString = ""
+    for key in keys
+        string = ""
+        for i in range(0, key.len - 1)
+            string = string + "-"
+        end for
+        seperatorString = seperatorString + "<color=" + COLORS["GRAY"] + ">" + addSpaceString(string, longestItemPerKey[key] - string.len + 2) + "</color>"
+    end for
+    print seperatorString
+
+    for item in items
+        string = ""
+        for key in keys
+            string = string + "<color=" + item[key].color + ">" + addSpaceString(item[key].text, longestItemPerKey[key] - item[key].text.len + 2) + "</color>"
+        end for
+        print string
+    end for
+end function
+
+ViperUi = {}
+ViperUi.ls = function(children)
+    keys = ["permissions", "owner", "name", "size"]
+    handleGetItem = function(item)
+        result = {}
+        result.permissions = {
+            "text": item.permissions,
+            "color": COLORS.YELLOW
+        }
+        result.owner = {
+            "text": item.owner,
+            "color": COLORS.GREEN
+        }
+        result.name = {
+            "text": item.name,
+            "color": COLORS.BLUE
+        }
+        if item.type == "FILE" then result.name.color = COLORS.GRAY
+        result.size = {
+            "text": item.size,
+            "color": COLORS.GRAY
+        }
+        return result
+    end function
+    items = map(children, @handleGetItem)
+
+    displayTable(keys, items)
+
+    print()
+end function
+ViperUi.targets = function (sessions)
+    keys = ["id", "user", "public ip", "local ip", "handler"]
+    i = 0
+    handleGetItem = function(session)
+        result = {}
+        result.id = {
+            "text": str(i),
+            "color": COLORS.YELLOW
+        }
+        result.user = {
+            "text": session.handler.getUser(),
+            "color": COLORS.GREEN
+        }
+        result["public ip"] = {
+            "text": session.data.ip.public,
+            "color": COLORS.BLUE
+        }
+        result["local ip"] = {
+            "text": session.data.ip.local,
+            "color": COLORS.BLUE
+        }
+        result.handler = {
+            "text": session.handler.type,
+            "color": COLORS.GRAY
+        }
+
+        outer.i = outer.i + 1
+        return result
+    end function
+    items = map(sessions, @handleGetItem)
+
+    displayTable(keys, items)
+
+    print()
+end function
+ViperUi.libs = function (libs)
+    keys = ["id", "library", "version", "public ip", "local ip", "pivot", "current"]
+    i = 0
+    handleGetItem = function(lib)
+        pivot = lib.pivot
+        current = lib.current
+        lib = lib.lib
+
+        result = {}
+        result.id = {
+            "text": str(i),
+            "color": COLORS.YELLOW
+        }
+        result.library = {
+            "text": lib.type,
+            "color": COLORS.GREEN
+        }
+        result.version = {
+            "text": lib.data.version,
+            "color": COLORS.BLUE
+        }
+        result["public ip"] = {
+            "text": lib.data.ip.public,
+            "color": COLORS.BLUE
+        }
+        result["local ip"] = {
+            "text": lib.data.ip.local,
+            "color": COLORS.BLUE
+        }
+        result.pivot = {
+            "color": COLORS.GRAY
+        }
+        if pivot then
+            result.pivot.text = "  *"
+            result.pivot.color = COLORS.GREEN
+        else
+            result.pivot.text = ""
+            result.pivot.color = COLORS.GRAY
+        end if
+        result.current = {
+            "color": COLORS.GRAY
+        }
+        if current then
+            result.current.text = "   *"
+            result.current.color = COLORS.GREEN
+        else
+            result.current.text = ""
+            result.current.color = COLORS.GRAY
+        end if
+
+
+        outer.i = outer.i + 1
+        return result
+    end function
+    items = map(libs, @handleGetItem)
+
+    displayTable(keys, items)
+
+    print()
+end function
+ViperUi.currentLibs = function (libs)
+    keys = ["library", "version", "public ip", "local ip"]
+    handleGetItem = function(lib)
+        result = {}
+        result.library = {
+            "text": lib.type,
+            "color": COLORS.GREEN
+        }
+        result.version = {
+            "text": lib.data.version,
+            "color": COLORS.BLUE
+        }
+        result["public ip"] = {
+            "text": lib.data.ip.public,
+            "color": COLORS.BLUE
+        }
+        result["local ip"] = {
+            "text": lib.data.ip.local,
+            "color": COLORS.BLUE
+        }
+        return result
+    end function
+    items = map(libs, @handleGetItem)
+
+    displayTable(keys, items)
+    print()
+end function
+ViperUi.nmap = function(devices, router)
+    keys = ["host", "port", "state", "service", "version"]
+
+    handleGetItem = function(device)
+        result = {}
+        result.host = {
+            "text": device.ip.local,
+            "color": COLORS.GREEN
+        }
+        result.port = {
+            "text": str(device.port),
+            "color": COLORS.BLUE
+        }
+        if device.open then
+            result.state = {
+                "text": "open",
+                "color": COLORS.GREEN
+            }
+        else
+            result.state = {
+                "text": "closed",
+                "color": COLORS.RED
+            }
+        end if
+        result.service = {
+            "text": device.type,
+            "color": COLORS.GRAY
+        }
+        result.version = {
+            "text": device.version,
+            "color": COLORS.GRAY
+        }
+        return result
+    end function
+    items = map(devices, @handleGetItem)
+
+    print()
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "IP" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.ip.public + "</color>" + "</color>"
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "ESSID" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.name + "</color>" + "</color>"
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "BSSID" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.id + "</color>" + "</color>"
+    print()
+
+    displayTable(keys, items)
+
+    print()
+end function
+ViperUi.displaySession = function(session)
+    handler = session.handler
+    ip = session.data.ip
+    name = "file"
+    if handler.type != "file" then name = handler.name
+    // result = handler.getUser() + "@" + name + "-[" + ip.public + ":" + ip.local + "] (" + handler.path + ") -> "
+    result = "<color=" + COLORS.GRAY + "><pos=4.95>———(" + handler.getUser() + "@" + "<color=" + COLORS.RED + ">" + name + "</color>" + ")——[" + "<color=" + COLORS.RED + ">" + ip.public + "</color>" + "]——[" + ip.local + "]——[" + "<color=" + COLORS.RED + ">" + handler.path + "</color>" + "]——[" + "<color=" + COLORS.GREEN + ">" + handler.type + "</color>" + "]<voffset=-0.35em><pos=0><rotate=90>—<pos=0><voffset=-0.7em>—<pos=0><voffset=-1.05em>—<rotate=0><pos=4.95><voffset=-1.4em>——<#c3201f>$</color></color> "
+    return result  
+end function
+ViperUi.init = function ()
+    print(viperCoolText)
+    print()
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.0.0" + "</color>" + "</color>"
+    print()
+end function
