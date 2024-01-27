@@ -33,6 +33,10 @@ Command.parseArgsToParameters = function(args)
         if args.hasIndex(i) then parameters[param.name] = args[i]
         if param.required and parameters[param.name] == null then return Error.New("Missing required parameter: " + param.name)
         if param.hasIndex("default") and parameters[param.name] == null then parameters[param.name] = param.default
+        if param.hasIndex("type") and param.type == "rest" then 
+            parameters[param.name] = slice(args, i, args.len()).join(" ")
+            break
+        end if
     end for
     return parameters
 end function

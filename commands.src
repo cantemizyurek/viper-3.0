@@ -812,6 +812,30 @@ commandManager.registerCommand(Command.New({
     "callback": @exitCommandHandler
 }))
 
+addAliasCommandHandler = function(params)
+    commandManager = extensionMediator.getExtension("commandManager")
+    alias = params.alias
+    command = params.command
+
+    commandManager.addAlias(alias, command)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "addalias",
+    "description": "Add an alias",
+    "parameters": [
+        {
+            "name": "alias",
+            "required": true
+        },
+        {
+            "name": "command",
+            "required": true,
+            "type": "rest"
+        }
+    ],
+    "callback": @addAliasCommandHandler
+}))
+
 helpCommandHandler = function(params)
     commandManager = extensionMediator.getExtension("commandManager")
     commandName = params.commandName

@@ -69,9 +69,7 @@ main = function()
 
     userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
     commandManager = extensionMediator.getExtension("commandManager")
-    commandName = userInput.split(" ")[0]
-    args = slice(userInput.split(" "), 1).join(" ")
-    resultOfExecution = commandManager.executeCommand(commandName, args)
+    resultOfExecution = commandManager.executeCommand(userInput)
 
     if resultOfExecution isa Error then return print(resultOfExecution.message)
     if resultOfExecution != null then return print(resultOfExecution)

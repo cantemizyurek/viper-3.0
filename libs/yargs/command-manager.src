@@ -3,12 +3,16 @@ import_code("../functional.src")
 
 CommandManager = {}
 CommandManager.commands = {}
+CommandManager.aliases = {}
 CommandManager.mediator = null
 CommandManager.getCommand = function(command)
     if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
     return self.commands[command]
 end function
-CommandManager.executeCommand = function(command,args)
+CommandManager.executeCommand = function(str)
+    parsedCommand = self.replaceText(str)
+    command = parsedCommand.split(" ")[0]
+    args = slice(parsedCommand.split(" "), 1).join(" ")
     if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
     command = self.commands[command]
     return command.execute(args)
@@ -22,8 +26,25 @@ end function
 CommandManager.setMediator = function(mediator)
     self.mediator = mediator
 end function
+CommandManager.addAlias = function(alias, str)
+    self.aliases[alias] = str
+end function
+CommandManager.removeAlias = function(alias)
+    self.aliases[alias] = null
+end function
+CommandManager.replaceText = function(text)
+    for v in self.aliases
+        key = v.key
+        value = v.value
+        index = text.indexOf(key)
+        if index == null or value == null then continue
+        text = text.replace(key,value)
+    end for
+    return text
+end function
 CommandManager.New = function()
     result = new CommandManager
     result.commands = {}
+    result.aliases = {}
     return result
 end function
