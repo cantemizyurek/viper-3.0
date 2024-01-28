@@ -75,7 +75,10 @@ main = function()
 
     result = commandManager.executeCommand(userInput)
 
-    if result isa Error then return print(result.message)
+    if result isa Error then 
+        commandManager.queue = []
+        return print(result.message)
+    end if
 
     while commandManager.queue.len() > 0
         toExecute = commandManager.queue.pull()
@@ -86,10 +89,9 @@ main = function()
         if resultOfExecution isa Error then
             commandManager.queue = []
             print(resultOfExecution.message)
-        else resultOfExecution != null
+        else if resultOfExecution != null then
             print(resultOfExecution)
         end if
-        
     end while
 end function
 
