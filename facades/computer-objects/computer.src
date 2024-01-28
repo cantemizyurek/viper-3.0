@@ -17,7 +17,7 @@ Computer.processes = function()
     return ssvToList(self.computer.show_procs())
 end function
 Computer.closeProcess = function(pid)
-    result = self.computer.close_program(pid)
+    result = self.computer.close_program(to_int(pid))
     if typeof(result) == "string" then return Error.New(result)
 end function
 Computer.createFolder = function(path, name)
