@@ -758,6 +758,23 @@ commandManager.registerCommand(Command.New({
     "callback": @nukeCommandHandler
 }))
 
+psCommandHabdler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    currentSession = sessionManager.currentSession
+    currentHandler = currentSession.handler
+
+    if currentHandler.type() != "shell" and currentHandler.type() != "computer" then return Error.New("Handler is not a shell or computer")
+    processes = currentHandler.processes()
+
+    ViperUi.ps(processes)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "ps",
+    "description": "List all processes",
+    "parameters": [],
+    "callback": @psCommandHabdler
+}))
+
 echoCommandHandler = function(params)
     text = params.text
     print(text)

@@ -198,6 +198,36 @@ ViperUi.libs = function (libs)
 
     print()
 end function
+ViperUi.ps = function(processes)
+    keys = ["user", "pid", "cpu", "mem", "name"]
+    handleGetItem = function(process)
+        result = {}
+        result.user = {
+            "text": process.USER,
+            "color": COLORS.GREEN
+        }
+        result.pid = {
+            "text": str(process.PID),
+            "color": COLORS.BLUE
+        }
+        result.cpu = {
+            "text": str(process.CPU) + "%",
+            "color": COLORS.BLUE
+        }
+        result.mem = {
+            "text": str(process.MEM) + "%",
+            "color": COLORS.BLUE
+        }
+        result.name = {
+            "text": process.COMMAND,
+            "color": COLORS.GRAY
+        }
+        return result
+    end function
+
+    items = map(processes, @handleGetItem)
+    displayTable(keys, items)
+end function
 ViperUi.currentLibs = function (libs)
     keys = ["library", "version", "public ip", "local ip"]
     handleGetItem = function(lib)
