@@ -245,7 +245,7 @@ sshCommandHandler = function(params)
     service = params.service
 
     if handler.type() != "shell" then return Error.New("Handler is not a shell")
-    result = handler.login(ip, username, password, port, service)
+    result = handler.connectTo(ip, username, password, port, service)
     if result isa Error then return result
 end function
 commandManager.registerCommand(Command.New({
