@@ -71,6 +71,20 @@ init = function()
 end function
 
 main = function()
+    while commandManager.queue.len() > 0
+        toExecute = commandManager.queue.pull()
+        command = toExecute[0]
+        args = toExecute[1]
+        resultOfExecution = command.execute(args)
+        
+        if resultOfExecution isa Error then
+           commandManager.queue = []
+           print(resultOfExecution.message)
+        else if resultOfExecution != null then
+           print(resultOfExecution)
+        end if
+    end while
+
     sessionManager = extensionMediator.getExtension("sessionManager")
 
     userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
@@ -82,20 +96,6 @@ main = function()
         commandManager.queue = []
         return print(result.message)
     end if
-
-    while commandManager.queue.len() > 0
-        toExecute = commandManager.queue.pull()
-        command = toExecute[0]
-        args = toExecute[1]
-        resultOfExecution = command.execute(args)
-
-        if resultOfExecution isa Error then
-            commandManager.queue = []
-            print(resultOfExecution.message)
-        else if resultOfExecution != null then
-            print(resultOfExecution)
-        end if
-    end while
 end function
 
 init()

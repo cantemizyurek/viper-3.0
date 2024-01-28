@@ -2,6 +2,9 @@ import_code("../../libs/error.src")
 
 MacroManager = {}
 MacroManager.mediator = null
+MacroManager.init = function ()
+    return self.runMacro("init")
+end function
 MacroManager.runMacro = function (name)
     commandManager = extensionMediator.getExtension("commandManager")
     macro = self.getMacro(name)
@@ -11,9 +14,6 @@ MacroManager.runMacro = function (name)
     for line in lines
         commandManager.executeCommand(line)
     end for
-end function
-MacroManager.init = function ()
-    return self.runMacro("init")
 end function
 MacroManager.getMacro = function (name)
     folder = self.getMacroFolder()
@@ -44,8 +44,8 @@ end function
 MacroManager.setMediator = function (mediator)
     self.mediator = mediator
 end function
-MacroManager.New = function (mediator)
+MacroManager.New = function ()
     self = new MacroManager
-    self.mediator = mediator
+    self.mediator = null
     return self
 end function
