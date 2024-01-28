@@ -245,8 +245,11 @@ sshCommandHandler = function(params)
     service = params.service
 
     if handler.type() != "shell" then return Error.New("Handler is not a shell")
-    result = handler.connectTo(ip, username, password, port, service)
+    result = handler.connectTo(ip, port, username, password, service)
     if result isa Error then return result
+
+    session = sessionManager.addSession(result, {})
+    sessionManager.setCurrentSession(sessionManager.getSessionIndex(session))
 end function
 commandManager.registerCommand(Command.New({
     "name": "ssh",
@@ -521,6 +524,7 @@ addLibCommandHandler = function(params)
         if jumpFile isa Error then return jumpFile
 
         handler.executeFile(jumpfileLocation, "getLib " + file.path())
+        if not get_custom_object.hasIndex("lib") then return Error.New("Failed to include library")
         lib = get_custom_object.lib
         if lib == null then return Error.New("Failed to include library")
         libManager.addLib(lib, { "path": file.path(), "ip": handler.ip })
@@ -615,6 +619,7 @@ sudoCommandHandler = function(params)
         if file isa Error then return file
 
         handler.executeFile(jumpfileLocation, "login " + user + " " + password)
+        if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
         shell = get_custom_object.user
         if shell == null then return Error.New("Failed to login")
         session = sessionManager.addSession(shell, { "ip": handler.ip })
