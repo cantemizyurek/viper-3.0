@@ -83,8 +83,11 @@ main = function()
         args = toExecute[1]
         resultOfExecution = command.execute(args)
 
-        if resultOfExecution isa Error then return print(resultOfExecution.message)
-        if resultOfExecution != null then return print(resultOfExecution)
+        if resultOfExecution isa Error then
+            commandManager.queue = []
+            print(resultOfExecution.message)
+        end if
+        if resultOfExecution != null then print(resultOfExecution)
     end while
 end function
 
