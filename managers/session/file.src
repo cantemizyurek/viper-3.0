@@ -22,7 +22,6 @@ FileSession.getFile = function(path)
             continue
         else
             hasChild = startingPath.hasChild(path)
-            if hasChild isa Error then return hasChild
             if hasChild == false then return Error.New("File not found: " + startingPath.path + "/" + path)
             startingPath = startingPath.child(path)
         end if

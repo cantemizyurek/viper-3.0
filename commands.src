@@ -9,7 +9,7 @@ lsCommandHandler = function(params)
 
     file = handler.getFile(path)
 
-    if file isa Error then return print(file.message)
+    if file isa Error then return file
     ViperUi.ls(file.children)
 end function
 commandManager.registerCommand(Command.New({

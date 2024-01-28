@@ -64,7 +64,7 @@ File.child = function (name)
 end function
 File.hasChild = function (name)
     children = self.child(name)
-    if children == null then return false
+    if children isa Error then return false
     return true
 end function
 File.parent = function ()
