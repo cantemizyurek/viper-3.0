@@ -231,6 +231,8 @@ end function
 ViperUi.currentLibs = function (libs)
     keys = ["library", "version", "public ip", "local ip"]
     handleGetItem = function(lib)
+        if lib == null then return null
+
         result = {}
         result.library = {
             "text": lib.type,
@@ -250,7 +252,10 @@ ViperUi.currentLibs = function (libs)
         }
         return result
     end function
-    items = map(libs, @handleGetItem)
+    filterNull = function(item)
+        return item != null
+    end function
+    items = filter(map(libs, @handleGetItem), @filterNull)
 
     displayTable(keys, items)
     print()
