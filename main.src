@@ -86,8 +86,10 @@ main = function()
         if resultOfExecution isa Error then
             commandManager.queue = []
             print(resultOfExecution.message)
+        else resultOfExecution != null
+            print(resultOfExecution)
         end if
-        if resultOfExecution != null then print(resultOfExecution)
+        
     end while
 end function
 
