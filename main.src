@@ -65,6 +65,9 @@ init = function()
         listCurrentLibs.push(lib.value)
     end for
     ViperUi.currentLibs(listCurrentLibs)
+
+    macroManager = extensionMediator.getExtension("macroManager")
+    macros = macroManager.init()
 end function
 
 main = function()
