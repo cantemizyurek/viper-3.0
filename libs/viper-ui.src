@@ -261,7 +261,7 @@ ViperUi.currentLibs = function (libs)
     print()
 end function
 ViperUi.nmap = function(devices, router)
-    keys = ["host", "port", "state", "service", "version"]
+    keys = ["host", "port", "forwarded", "state", "service", "version"]
 
     handleGetItem = function(device)
         result = {}
@@ -273,14 +273,25 @@ ViperUi.nmap = function(devices, router)
             "text": str(device.port),
             "color": COLORS.BLUE
         }
+        if device.forwarded then
+            result.forwarded = {
+                "text": "TRUE",
+                "color": COLORS.GREEN
+            }
+        else
+            result.forwarded = {
+                "text": "FALSE",
+                "color": COLORS.RED
+            }
+        end if
         if device.open then
             result.state = {
-                "text": "open",
+                "text": "OPEN",
                 "color": COLORS.GREEN
             }
         else
             result.state = {
-                "text": "closed",
+                "text": "CLOSED",
                 "color": COLORS.RED
             }
         end if

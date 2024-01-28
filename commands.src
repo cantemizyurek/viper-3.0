@@ -201,7 +201,8 @@ nmapCommandHandler = function(params)
                 "port": "none",
                 "type": "none",
                 "version": "none",
-                "open": false
+                "open": false,
+                "forwarded": false
             })
         else
             for port in device.ports
@@ -210,7 +211,8 @@ nmapCommandHandler = function(params)
                     "port": port.port,
                     "type": port.type,
                     "version": port.version,
-                    "open": port.open
+                    "open": port.open,
+                    "forwarded": port.forwarded
                 })
             end for
         end if
