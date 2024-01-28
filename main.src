@@ -9,6 +9,7 @@ import_code("./libs/error.src")
 import_code("./libs/viper-ui.src")
 import_code("./libs/functional.src")
 import_code("./facades/network/router.src")
+import_code("./managers/macro/macro-manager.src")
 
 extensionMediator = ExtensionMediator.New()
 
@@ -20,6 +21,8 @@ libManager = LibManager.New()
 extensionMediator.addExtension("libManager", libManager)
 metaxploitManager = MetaxploitManager.New()
 extensionMediator.addExtension("metaxploitManager", metaxploitManager)
+macroManager = MacroManager.New()
+extensionMediator.addExtension("macroManager", macroManager)
 
 import_code("./commands.src")
 
@@ -69,10 +72,20 @@ main = function()
 
     userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
     commandManager = extensionMediator.getExtension("commandManager")
-    resultOfExecution = commandManager.executeCommand(userInput)
 
-    if resultOfExecution isa Error then return print(resultOfExecution.message)
-    if resultOfExecution != null then return print(resultOfExecution)
+    result = commandManager.executeCommand(userInput)
+
+    if result isa Error then return print(result.message)
+
+    while commandManager.queue.len() > 0
+        toExecute = commandManager.queue.pull()
+        command = toExecute[0]
+        args = toExecute[1]
+        resultOfExecution = command.execute(args)
+
+        if resultOfExecution isa Error then return print(resultOfExecution.message)
+        if resultOfExecution != null then return print(resultOfExecution)
+    end while
 end function
 
 init()

@@ -58,7 +58,9 @@ File.child = function (name)
     findChildrenHandler = function (child)
         return child.name() == name
     end function
-    return find(children, @findChildrenHandler)
+    result = find(children, @findChildrenHandler)
+    if result == null then return Error.New("Not able to find child")
+    return result
 end function
 File.hasChild = function (name)
     children = self.child(name)
