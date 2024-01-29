@@ -554,9 +554,12 @@ addLibCommandHandler = function(params)
     if file isa Error then return file
 
     if jumpfileLocation == null then
+        pivotSession = sessionManager.pivotSession
+        pivotHandler = pivotSession.handler
+
         lib = include_lib(file.path())
         if lib == null then return Error.New("Failed to include library")
-        libManager.addLib(lib, { "path": file.path(), "ip": handler.ip })
+        libManager.addLib(lib, { "path": file.path(), "ip": pivotHandler.ip })
     else
         jumpFile = handler.getFile(jumpfileLocation)
         if jumpFile isa Error then return jumpFile
