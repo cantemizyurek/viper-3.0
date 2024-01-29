@@ -1,0 +1,19 @@
+getUserFromHandler = function (handler)
+    rootFile = handler.getFile("/root")
+    if rootFile.hasPermission("w") then 
+        return "root"
+    else 
+        homeFile = handler.getFile("/home")
+        found = false
+        for user in homeFile.children()
+            if user.name() == "guest" then continue
+            if user.hasPermission("w") then 
+                found = true
+                return user.name()
+            end if
+        end for
+        if not found then
+            return "guest"
+        end if
+    end if
+end function

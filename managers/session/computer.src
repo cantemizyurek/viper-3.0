@@ -1,6 +1,7 @@
 import_code("./file.src")
 import_code("../../libs/error.src")
 import_code("../../facades/computer-objects/computer.src")
+import_code("../../utils/getUserFromHandler.src")
 
 ComputerSession = new FileSession
 ComputerSession.computer = null
@@ -47,5 +48,7 @@ ComputerSession.New = function (computer)
     result.computer = computer
     result.root = climbFileToRoot(computer.getFile("/"))
     result.current = computer.getFile("/")
+    result.user = getUserFromHandler(result)
+
     return result
 end function
