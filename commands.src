@@ -814,8 +814,17 @@ nukeCommandHandler = function(params)
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
 
+    handleFilter = function (session)
+        if session.data.ip == currentSession.data.ip then return true
+        return false
+    end function
+    sessions = filter(sessionManager.sessions, @handleFilter)
+
     currentHandler.delete("/")
-    currentHandler.goTo("/")
+    
+    for session in sessions
+        session.handler.goTo("/")
+    end for
 end function
 commandManager.registerCommand(Command.New({
     "name": "nuke",
