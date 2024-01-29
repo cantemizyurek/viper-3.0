@@ -69,7 +69,7 @@ FileSession.move = function(path, newPath)
     if fileToMove isa Error then return fileToMove
     newFileLocation = self.getFile(newPath)
     newFileName = fileToMove.name()
-    if newFileLocation isa Error then
+    if newFileLocation isa Error or newFileLocation.type() == FILE_TYPES.FILE then
         newFileName = newPath.split("/").pop()
         newFileLocation = self.getFile(slice(newPath.split("/"), 0, newPath.split("/").len() - 1).join("/"))
         if newFileLocation isa Error then return newFileLocation
