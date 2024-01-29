@@ -647,14 +647,10 @@ sudoCommandHandler = function(params)
     jumpfileLocation = params.jumpfileLocation
 
     logIn = function (user, password)
-        if handler.type() != "shell" then return Error.New("Handler is not a shell")
         if jumpfileLocation == null then
             shell = get_shell(user, password)
             if shell == null then return Error.New("Failed to login")
         else
-            file = handler.getFile(jumpfileLocation)
-            if file isa Error then return file
-
             handler.executeFile(jumpfileLocation, "login " + user + " " + password)
             if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
             shell = get_custom_object.user
@@ -667,19 +663,21 @@ sudoCommandHandler = function(params)
     if handler.type() != "shell" then return Error.New("Handler is not a shell")
     if password == "dict" then
         dictionaryManager = extensionMediator.getExtension("dictionaryManager")
-        shell = logIn(user, password)
 
         print "Trying dictionary attack"
 
-        pass = dictionaryManager.get()
-        while not pass isa Error
-            if dictionaryManager.index % 50000 == 0 then print "Done " + round(dictionaryManager.index / dictionaryManager.passwords.len * 100, 2) + "%"
+        if jumpfileLocation != null then
+            get_custom_object.passwords = dictionaryManager.passwords
+            shell = logIn(user)
+        else
+            password = dictionaryManager.get()
 
-            shell = logIn(user, pass)
-            if not shell isa Error then break
-            if shell.message != "Failed to login" then return shell
-            pass = dictionaryManager.get()
-        end while
+            while not password isa Error 
+                shell = logIn(user, password)
+                if not shell isa Error then break
+                password = dictionaryManager.get()
+            end while
+        end if
     else
         shell = logIn(user, password)
     end if

@@ -13,6 +13,16 @@ if type == ""login"" then
     user = params[1]
     pass = params[2]
     result = loginAs(user, pass)
+
+    if get_custom_object.hasIndex(""passwords"") then
+        passwords = get_custom_object.passwords
+
+        for pass in passwords 
+            result = loginAs(user, pass)
+            if result != null then break
+        end for
+    end if
+
     get_custom_object.user = result
 else if type == ""getLib"" then
     path = params[1]
