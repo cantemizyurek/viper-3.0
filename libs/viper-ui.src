@@ -113,7 +113,7 @@ ViperUi.targets = function (sessions)
             "color": COLORS.YELLOW
         }
         result.user = {
-            "text": session.handler.getUser(),
+            "text": session.handler.user,
             "color": COLORS.GREEN
         }
         result["public ip"] = {
@@ -322,8 +322,8 @@ ViperUi.displaySession = function(session)
     ip = session.data.ip
     name = "file"
     if handler.type != "file" then name = handler.name
-    // result = handler.getUser() + "@" + name + "-[" + ip.public + ":" + ip.local + "] (" + handler.path + ") -> "
-    result = "<color=" + COLORS.GRAY + "><pos=4.95>———(" + handler.getUser() + "@" + "<color=" + COLORS.RED + ">" + name + "</color>" + ")——[" + "<color=" + COLORS.RED + ">" + ip.public + "</color>" + "]——[" + ip.local + "]——[" + "<color=" + COLORS.RED + ">" + handler.path + "</color>" + "]——[" + "<color=" + COLORS.GREEN + ">" + handler.type + "</color>" + "]<voffset=-0.35em><pos=0><rotate=90>—<pos=0><voffset=-0.7em>—<pos=0><voffset=-1.05em>—<rotate=0><pos=4.95><voffset=-1.4em>——<#c3201f>$</color></color> "
+    // result = handler.user + "@" + name + "-[" + ip.public + ":" + ip.local + "] (" + handler.path + ") -> "
+    result = "<color=" + COLORS.GRAY + "><pos=4.95>———(" + handler.user + "@" + "<color=" + COLORS.RED + ">" + name + "</color>" + ")——[" + "<color=" + COLORS.RED + ">" + ip.public + "</color>" + "]——[" + ip.local + "]——[" + "<color=" + COLORS.RED + ">" + handler.path + "</color>" + "]——[" + "<color=" + COLORS.GREEN + ">" + handler.type + "</color>" + "]<voffset=-0.35em><pos=0><rotate=90>—<pos=0><voffset=-0.7em>—<pos=0><voffset=-1.05em>—<rotate=0><pos=4.95><voffset=-1.4em>——<#c3201f>$</color></color> "
     return result  
 end function
 ViperUi.init = function ()

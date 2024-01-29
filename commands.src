@@ -76,7 +76,7 @@ corruptLogsCommandHandler = function(params)
     handler = session.handler
 
     if handler.type() == "file" then return Error.New("Handler is not a shell or computer")
-    if handler.getUser() != "root" then return Error.New("You must be root to corrupt the logs")
+    if handler.user != "root" then return Error.New("You must be root to corrupt the logs")
 
     logFile = handler.getFile("/var/system.log")
     if logFile isa Error then return Error.New("Failed to get log file")

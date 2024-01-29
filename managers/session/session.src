@@ -37,10 +37,10 @@ Session.New = function (handler, data)
         return Error.New("File session requires ip")
     end if
 
-    if handler.getUser() == "root" then
+    if handler.user == "root" then
         handler.goTo("/root")
     else
-        handler.goTo("/home/" + handler.getUser())
+        handler.goTo("/home/" + handler.user)
     end if
 
     return result

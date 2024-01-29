@@ -99,9 +99,6 @@ FileSession.isParentOf = function(path, childPath)
     if startsWith(childPath, path) then return true
     return false
 end function
-FileSession.getUser = function()
-    return self.user
-end function
 FileSession.type = function()
     return "file"
 end function

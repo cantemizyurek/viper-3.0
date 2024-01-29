@@ -27,7 +27,7 @@ MacroManager.getMacroFolder = function ()
     pivotSession = sessionManager.pivotSession
     handler = pivotSession.handler
 
-    user = handler.getUser()
+    user = handler.user
     folder = handler.getFile("/home/guest/Config")
     if user == "root" then
         folder = handler.getFile("/root/Config")
