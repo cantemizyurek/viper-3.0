@@ -863,7 +863,7 @@ commandManager.registerCommand(Command.New({
 
 echoCommandHandler = function(params)
     text = params.text
-    print(text)
+    return text
 end function
 commandManager.registerCommand(Command.New({
     "name": "echo",
