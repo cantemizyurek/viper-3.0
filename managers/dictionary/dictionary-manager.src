@@ -5,6 +5,7 @@ import_code("./list-2.src")
 import_code("./list-3.src")
 import_code("./list-4.src")
 import_code("./list-5.src")
+import_code("./list-6.src")
 
 DictionaryManager = {}
 DictionaryManager.passwords = null
@@ -29,6 +30,7 @@ DictionaryManager.init = function ()
     passwords = passwords + list3.split("\n")
     passwords = passwords + list4.split("\n")
     passwords = passwords + list5.split("\n")
+    passwords = passwords + list6.split("\n")
 
     allPasswords = []
     handleLowerCase = function (password)
