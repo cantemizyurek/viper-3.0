@@ -10,6 +10,7 @@ import_code("./libs/viper-ui.src")
 import_code("./libs/functional.src")
 import_code("./facades/network/router.src")
 import_code("./managers/macro/macro-manager.src")
+import_code("./managers/dictionary/dictionary-manager.src")
 
 extensionMediator = ExtensionMediator.New()
 
@@ -23,6 +24,8 @@ metaxploitManager = MetaxploitManager.New()
 extensionMediator.addExtension("metaxploitManager", metaxploitManager)
 macroManager = MacroManager.New()
 extensionMediator.addExtension("macroManager", macroManager)
+dictionaryManager = DictionaryManager.New()
+extensionMediator.addExtension("dictionaryManager", dictionaryManager)
 
 import_code("./commands.src")
 
@@ -84,6 +87,9 @@ main = function()
            print(resultOfExecution)
         end if
     end while
+
+    dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+    dictionaryManager.reset()
 
     sessionManager = extensionMediator.getExtension("sessionManager")
 

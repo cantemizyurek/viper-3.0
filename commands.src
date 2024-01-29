@@ -610,27 +610,54 @@ sudoCommandHandler = function(params)
     password = params.password
     jumpfileLocation = params.jumpfileLocation
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
-    if jumpfileLocation == null then
-        shell = get_shell(user, password)
-        if shell == null then return Error.New("Failed to login")
-        session = sessionManager.addSession(shell, { "ip": handler.ip })
-        sessionManager.setCurrentSession(sessionManager.getSessionIndex(session))
-    else
-        file = handler.getFile(jumpfileLocation)
-        if file isa Error then return file
+    logIn = function (user, password)
+        if handler.type() != "shell" then return Error.New("Handler is not a shell")
+        if jumpfileLocation == null then
+            shell = get_shell(user, password)
+            if shell == null then return Error.New("Failed to login")
+        else
+            file = handler.getFile(jumpfileLocation)
+            if file isa Error then return file
 
-        handler.executeFile(jumpfileLocation, "login " + user + " " + password)
-        if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
-        shell = get_custom_object.user
-        if shell == null then return Error.New("Failed to login")
-        session = sessionManager.addSession(shell, { "ip": handler.ip })
-        sessionManager.setCurrentSession(sessionManager.getSessionIndex(session))
+            handler.executeFile(jumpfileLocation, "login " + user + " " + password)
+            if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
+            shell = get_custom_object.user
+            if shell == null then return Error.New("Failed to login")
+        end if
+
+        return shell
+    end function
+
+    if handler.type() != "shell" then return Error.New("Handler is not a shell")
+    if password == "dict" then
+        dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+        shell = logIn(user, password)
+
+        print "Trying dictionary attack"
+
+        pass = dictionaryManager.get()
+        while not pass isa Error
+            if dictionaryManager.index % 50000 == 0 then print "Done " + round(dictionaryManager.index / dictionaryManager.passwords.len * 100, 2) + "%"
+
+            shell = logIn(user, pass)
+            if not shell isa Error then break
+            if shell.message != "Failed to login" then return shell
+            pass = dictionaryManager.get()
+        end while
+    else
+        shell = logIn(user, password)
     end if
+
+    if shell isa Error then return shell
+
+    session = sessionManager.addSession(shell, { "ip": handler.ip })
+    sessionManager.setCurrentSession(sessionManager.getSessionIndex(session))
+
+    return "Logged in"
 end function
 commandManager.registerCommand(Command.New({
     "name": "sudo",
-    "description": "Login to a shell",
+    "description": "Login to a shell (you can pass dict as the password to use the dictionary attack)",
     "parameters": [
         {
             "name": "user",
