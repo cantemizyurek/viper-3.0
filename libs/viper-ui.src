@@ -211,11 +211,11 @@ ViperUi.ps = function(processes)
             "color": COLORS.BLUE
         }
         result.cpu = {
-            "text": str(process.CPU) + "%",
+            "text": str(process.CPU),
             "color": COLORS.BLUE
         }
         result.mem = {
-            "text": str(process.MEM) + "%",
+            "text": str(process.MEM),
             "color": COLORS.BLUE
         }
         result.name = {
