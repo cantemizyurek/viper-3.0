@@ -79,6 +79,21 @@ cpCommandHandler = function(params)
 
     return handler.copy(path, newPath)
 end function
+commandManager.registerCommand(Command.New({
+    "name": "cp",
+    "description": "Copy a file or directory",
+    "parameters": [
+        {
+            "name": "path",
+            "required": true
+        },
+        {
+            "name": "newPath",
+            "required": true
+        }
+    ],
+    "callback": @cpCommandHandler
+}))
 
 catCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
