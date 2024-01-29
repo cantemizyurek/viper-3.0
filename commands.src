@@ -838,7 +838,8 @@ commandManager.registerCommand(Command.New({
         {
             "name": "text",
             "required": false,
-            "default": ""
+            "default": "",
+            "type": "rest"
         }
     ],
     "callback": @echoCommandHandler
