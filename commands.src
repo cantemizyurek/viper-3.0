@@ -71,6 +71,49 @@ commandManager.registerCommand(Command.New({
     "callback": @mvCommandHandler
 }))
 
+writeCommandHandler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    path = params.path
+    type = params.type
+    content = params.content
+
+    file = handler.getFile(path)
+    if file isa Error then return file
+
+    if type == ">" then
+        file.setContent(content)
+    else
+        file.appendContent(content)
+    end if
+end function
+commandManager.registerCommand(Command.New({
+    "name": "write",
+    "description": "Write to a file",
+    "parameters": [
+        Parameter.New({
+            "name": "path",
+            "required": true
+        }),
+        OptionsParameter.New({
+            "name": "type",
+            "required": true,
+            "options": {
+                ">": ">",
+                ">>": ">>"
+            }
+        }),
+        RestParameter.New({
+            "name": "content",
+            "required": false,
+            "default": ""
+        })
+    ],
+    "callback": @writeCommandHandler
+}))
+
+
 corruptLogsCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession

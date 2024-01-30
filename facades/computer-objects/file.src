@@ -44,6 +44,13 @@ File.setContent = function (newContent)
     result = self.file.set_content(newContent)
     if not(result) then return Error.New(result)
 end function
+File.appendContent = function (newContent)
+    if self.type() == FILE_TYPES.FOLDER then return Error.New("Not able to set content of a folder")
+    oldContent = self.content()
+    if oldContent isa Error then return oldContent
+    result = self.setContent(oldContent + newContent)
+    return result
+end function
 File.children = function ()
     if self.type() == FILE_TYPES.FILE then return Error.New("Not able to get children of a file")
     children = self.file.get_files() + self.file.get_folders()
