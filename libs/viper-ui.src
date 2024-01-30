@@ -330,8 +330,22 @@ ViperUi.help = function (commands)
         }
         parametersString = ""
         for parameter in command.parameters
-            if parameter.required then parametersString = parametersString + " <" + parameter.name + ">"
-            if not parameter.required then parametersString = parametersString + " [" + parameter.name + "]"
+            if parameter.required then parametersString = parametersString + " <" 
+            if not parameter.required then parametersString = parametersString + " ["
+
+            if parameter.type == "options" then
+                optionsString = ""
+                for option in parameter.options
+                    optionsString = optionsString + option.key + "|"
+                end for
+                optionsString = optionsString[:-1]
+                parametersString = parametersString + optionsString
+            else
+                parametersString = parametersString + parameter.name
+            end if
+
+            if parameter.required then parametersString = parametersString + ">"
+            if not parameter.required then parametersString = parametersString + "]"
         end for
         result.arguments = {
             "text": parametersString,

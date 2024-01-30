@@ -22,7 +22,7 @@ Shell.buildFile = function(fileLocation, newFileLocation)
     if result != "" then return Error.New(result)
 end function
 Shell.connectTo = function(ip, port, user, pass, service = "ssh")
-    result = self.shell.connect_service(ip, to_int(port), user, pass, service)
+    result = self.shell.connect_service(ip, port, user, pass, service)
     if typeof(result) == "string" then return Error.New(result)
     return Shell.New(result)
 end function

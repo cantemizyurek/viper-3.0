@@ -1,5 +1,6 @@
 import_code("./jumpfile/jumpfile-text.src")
 import_code("./libs/random-ip.src")
+import_code("./managers/command/command.src")
 
 lsCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
@@ -16,11 +17,11 @@ commandManager.registerCommand(Command.New({
     "name": "ls",
     "description": "List all items in the provided directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
-            "default": ".",
-            "required": false
-        }
+            "required": false,
+            "default": "."
+        })
     ],
     "callback": @lsCommandHandler
 }))
@@ -37,10 +38,10 @@ commandManager.registerCommand(Command.New({
     "name": "cd",
     "description": "Change directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @cdCommandHandler
 }))
@@ -58,14 +59,14 @@ commandManager.registerCommand(Command.New({
     "name": "mv",
     "description": "Move a file or directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "newPath",
             "required": true
-        }
+        })
     ],
     "callback": @mvCommandHandler
 }))
@@ -108,14 +109,14 @@ commandManager.registerCommand(Command.New({
     "name": "cp",
     "description": "Copy a file or directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "newPath",
             "required": true
-        }
+        })
     ],
     "callback": @cpCommandHandler
 }))
@@ -135,10 +136,10 @@ commandManager.registerCommand(Command.New({
     "name": "cat",
     "description": "Print the contents of a file",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @catCommandHandler
 }))
@@ -155,10 +156,10 @@ commandManager.registerCommand(Command.New({
     "name": "touch",
     "description": "Create a file",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @touchCommandHandler,
     "permissions": {
@@ -178,10 +179,10 @@ commandManager.registerCommand(Command.New({
     "name": "mkdir",
     "description": "Create a directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @mkdirCommandHandler,
     "permissions": {
@@ -201,10 +202,10 @@ commandManager.registerCommand(Command.New({
     "name": "rm",
     "description": "Delete a file or directory",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @rmCommandHandler
 }))
@@ -222,10 +223,10 @@ commandManager.registerCommand(Command.New({
     "name": "crack",
     "description": "Crack a hash",
     "parameters": [
-        {
+        Parameter.New({
             "name": "hash",
             "required": true
-        }
+        })
     ],
     "callback": @crackCommandHandler
 }))
@@ -273,10 +274,10 @@ commandManager.registerCommand(Command.New({
     "name": "nmap",
     "description": "Scan the network for devices",
     "parameters": [
-        {
+        Parameter.New({
             "name": "ip",
             "required": true
-        }
+        })
     ],
     "callback": @nmapCommandHandler
 }))
@@ -302,28 +303,33 @@ commandManager.registerCommand(Command.New({
     "name": "ssh",
     "description": "Login to a computer",
     "parameters": [
-        {
+        Parameter.New({
             "name": "ip",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "username",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "password",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "port",
             "required": false,
-            "default": "22"
-        },
-        {
+            "type": PARAMETER_TYPES.NUMBER,
+            "default": 22
+        }),
+        OptionsParameter.New({
             "name": "service",
             "required": false,
+            "options": {
+                "ssh": "ssh",
+                "ftp": "ftp",
+            },
             "default": "ssh"
-        }
+        })
     ],
     "callback": @sshCommandHandler,
     "permissions": {
@@ -346,18 +352,19 @@ commandManager.registerCommand(Command.New({
     "name": "passwd",
     "description": "Change a user's password",
     "parameters": [
-        {
+        Parameter.New({
             "name": "username",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "password",
             "required": true
-        }
+        })
     ],
     "callback": @passwdCommandHandler,
     "permissions": {
-        "object": "computer"
+        "object": "computer",
+        "privilege": "root"
     }
 }))
 
@@ -400,18 +407,18 @@ commandManager.registerCommand(Command.New({
     "name": "exploitscan",
     "description": "Scan the network for exploits",
     "parameters": [
-        {
+        Parameter.New({
             "name": "address",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "port",
-            "required": false
-        },
-        {
+            "required": true
+        }),
+        Parameter.New({
             "name": "options",
             "required": false
-        }
+        })
     ],
     "callback": @exploitScanCommandHandler
 }))
@@ -435,9 +442,9 @@ delTargetCommandHandler = function(params)
     sessionIndex = params.sessionIndex
     count = params.count
 
-    for i in range(to_int(sessionIndex), to_int(sessionIndex) + to_int(count) - 1)
+    for i in range(sessionIndex, sessionIndex + count - 1)
         if i >= sessions.len then break
-        session = sessionManager.removeSession(to_int(sessionIndex))
+        session = sessionManager.removeSession(sessionIndex)
         if session isa Error then break
     end for
 end function
@@ -445,15 +452,17 @@ commandManager.registerCommand(Command.New({
     "name": "deltarget",
     "description": "Delete a target",
     "parameters": [
-        {
+        Parameter.New({
             "name": "sessionIndex",
             "required": true,
-        },
-        {
+            "type": PARAMETER_TYPES.NUMBER
+        }),
+        Parameter.New({
             "name": "count",
             "required": false,
-            "default": "1"
-        }
+            "type": PARAMETER_TYPES.NUMBER,
+            "default": 1
+        })
     ],
     "callback": @delTargetCommandHandler
 }))
@@ -463,17 +472,18 @@ useCommandHandler = function(params)
     sessions = sessionManager.sessions
     sessionIndex = params.sessionIndex
 
-    session = sessionManager.setCurrentSession(to_int(sessionIndex))
+    session = sessionManager.setCurrentSession(sessionIndex)
     if session isa Error then return session
 end function
 commandManager.registerCommand(Command.New({
     "name": "use",
     "description": "Use a target",
     "parameters": [
-        {
+        Parameter.New({
             "name": "sessionIndex",
-            "required": true
-        }
+            "required": true,
+            "type": PARAMETER_TYPES.NUMBER
+        })
     ],
     "callback": @useCommandHandler
 }))
@@ -512,7 +522,7 @@ useLibCommandHandler = function(params)
     libraries = libraryManager.libs
     libraryIndex = params.libraryIndex
 
-    lib = libraryManager.getLib(to_int(libraryIndex))
+    lib = libraryManager.getLib(libraryIndex)
     if lib isa Error then return lib
 
     library = libraryManager.setCurrentLib(lib)
@@ -522,10 +532,11 @@ commandManager.registerCommand(Command.New({
     "name": "uselib",
     "description": "Use a library",
     "parameters": [
-        {
+        Parameter.New({
             "name": "libraryIndex",
-            "required": true
-        }
+            "required": true,
+            "type": PARAMETER_TYPES.NUMBER
+        })
     ],
     "callback": @useLibCommandHandler
 }))
@@ -535,7 +546,7 @@ usePivotLibCommandHandler = function(params)
     libraries = libraryManager.libs
     libraryIndex = params.libraryIndex
 
-    lib = libraryManager.getLib(to_int(libraryIndex))
+    lib = libraryManager.getLib(libraryIndex)
     if lib isa Error then return lib
 
     library = libraryManager.setPivotLib(lib)
@@ -545,10 +556,11 @@ commandManager.registerCommand(Command.New({
     "name": "usepivotlib",
     "description": "Use a library as a pivot",
     "parameters": [
-        {
+        Parameter.New({
             "name": "libraryIndex",
-            "required": true
-        }
+            "required": true,
+            "type": PARAMETER_TYPES.NUMBER
+        })
     ],
     "callback": @usePivotLibCommandHandler
 }))
@@ -588,14 +600,14 @@ commandManager.registerCommand(Command.New({
     "name": "addlib",
     "description": "Add a library",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "jumpfileLocation",
             "required": false
-        }
+        })
     ],
     "callback": @addLibCommandHandler,
     "permissions": {
@@ -626,11 +638,11 @@ commandManager.registerCommand(Command.New({
     "name": "jumpfile",
     "description": "Create a jump file",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": false,
             "default": "."
-        }
+        })
     ],
     "callback": @jumpFileCommandHandler,
     "permissions": {
@@ -650,10 +662,10 @@ commandManager.registerCommand(Command.New({
     "name": "execute",
     "description": "Execute a file",
     "parameters": [
-        {
+        Parameter.New({
             "name": "path",
             "required": true
-        }
+        })
     ],
     "callback": @executeCommandHandler,
     "permissions": {
@@ -715,18 +727,18 @@ commandManager.registerCommand(Command.New({
     "name": "sudo",
     "description": "Login to a shell (you can pass dict as the password to use the dictionary attack)",
     "parameters": [
-        {
+        Parameter.New({
             "name": "user",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "password",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "jumpfileLocation",
             "required": false
-        }
+        })
     ],
     "callback": @sudoCommandHandler,
     "permissions": {
@@ -787,15 +799,15 @@ commandManager.registerCommand(Command.New({
     "name": "get",
     "description": "Get a file from the pivot",
     "parameters": [
-        {
+        Parameter.New({
             "name": "fromPath",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "toPath",
             "required": false,
             "default": "."
-        }
+        })
     ],
     "callback": @getCommandHandler,
     "permissions": {
@@ -820,15 +832,15 @@ commandManager.registerCommand(Command.New({
     "name": "put",
     "description": "Put a file to the pivot",
     "parameters": [
-        {
+        Parameter.New({
             "name": "fromPath",
             "required": true
-        },
-        {
+        }),
+        Parameter.New({
             "name": "toPath",
             "required": false,
             "default": "."
-        }
+        })
     ],
     "callback": @putCommandHandler,
     "permissions": {
@@ -896,10 +908,10 @@ commandManager.registerCommand(Command.New({
     "name": "kill",
     "description": "Kill a process",
     "parameters": [
-        {
+        Parameter.New({
             "name": "pid",
             "required": true
-        }
+        })
     ],
     "callback": @killCommandHandler,
     "permissions": {
@@ -915,12 +927,11 @@ commandManager.registerCommand(Command.New({
     "name": "echo",
     "description": "Print text",
     "parameters": [
-        {
+        RestParameter.New({
             "name": "text",
             "required": false,
-            "default": "",
-            "type": "rest"
-        }
+            "default": ""
+        })
     ],
     "callback": @echoCommandHandler
 }))
@@ -938,7 +949,7 @@ commandManager.registerCommand(Command.New({
 
 backCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
-    count = to_int(params.count)
+    count = params.count
     if count == null then return Error.New("Invalid count")
     for i in range(0, count - 1)
         sessionManager.goBack()
@@ -948,11 +959,12 @@ commandManager.registerCommand(Command.New({
     "name": "back",
     "description": "back out of shell",
     "parameters": [
-        {
+        Parameter.New({
             "name": "count",
             "required": false,
-            "default": "1"
-        }
+            "type": PARAMETER_TYPES.NUMBER,
+            "default": 1
+        })
     ],
     "callback": @backCommandHandler
 }))
@@ -978,15 +990,14 @@ commandManager.registerCommand(Command.New({
     "name": "addalias",
     "description": "Add an alias",
     "parameters": [
-        {
+        Parameter.New({
             "name": "alias",
             "required": true
-        },
-        {
+        }),
+        RestParameter.New({
             "name": "command",
-            "required": true,
-            "type": "rest"
-        }
+            "required": true
+        })
     ],
     "callback": @addAliasCommandHandler
 }))
@@ -1020,10 +1031,10 @@ commandManager.registerCommand(Command.New({
     "name": "help",
     "description": "Show help",
     "parameters": [
-        {
+        Parameter.New({
             "name": "commandName",
             "required": false
-        }
+        })
     ],
     "callback": @helpCommandHandler
 }))
