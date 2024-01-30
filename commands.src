@@ -1067,6 +1067,51 @@ commandManager.registerCommand(Command.New({
     "callback": @nsLookupCommandHandler
 }))
 
+secureCommandHandler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    type = params.type
+
+    if type == "home" then
+        files = handler.getFile("/").children
+        handleSecureFile = function(file)
+            if file.name == "home" then return
+            file.setPermissions("o-rwx", true)
+            file.setPermissions("g-rwx", true)
+            file.setPermissions("u-rwx", true)
+        end function
+        forEach(files, @handleSecureFile)
+    else
+        files = handler.getFile("/").children
+        handleSecureFile = function(file)
+            file.setPermissions("o-rwx", true)
+            file.setPermissions("g-rwx", true)
+            file.setPermissions("u-rwx", true)
+        end function
+        forEach(files, @handleSecureFile)
+    end if
+end function
+commandManager.registerCommand(Command.New({
+    "name": "secure",
+    "description": "Secure the system",
+    "parameters": [
+        OptionsParameter.New({
+            "name": "type",
+            "required": true,
+            "options": {
+                "home": "home",
+                "server": "server"
+            }
+        }),
+    ],
+    "callback": @secureCommandHandler,
+    "permissions": {
+        "object": "file",
+        "privilege": "root"
+    }
+}))
+
 helpCommandHandler = function(params)
     commandManager = extensionMediator.getExtension("commandManager")
     commandName = params.commandName
