@@ -1049,6 +1049,24 @@ commandManager.registerCommand(Command.New({
     "callback": @addAliasCommandHandler
 }))
 
+nsLookupCommandHandler = function(params)
+    address = params.address
+    result = nslookup(address)
+    if result == "Not Found" then return Error.New("Not Found")
+    return result
+end function
+commandManager.registerCommand(Command.New({
+    "name": "nslookup",
+    "description": "Lookup an ip address",
+    "parameters": [
+        Parameter.New({
+            "name": "address",
+            "required": true
+        })
+    ],
+    "callback": @nsLookupCommandHandler
+}))
+
 helpCommandHandler = function(params)
     commandManager = extensionMediator.getExtension("commandManager")
     commandName = params.commandName
