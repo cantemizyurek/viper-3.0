@@ -6,6 +6,10 @@ Command.name = null
 Command.description = null
 Command.parameters = []
 Command.callback = null
+Command.permissions = {
+    "object": "file",
+    "privilege": "guest"
+}
 Command.execute = function(args)
     parameters = self.parseArgsToParameters(args.split(" "))
     if parameters isa Error then return parameters
@@ -42,9 +46,21 @@ Command.parseArgsToParameters = function(args)
 end function
 Command.New = function(options)
     command = new Command
-    command.name = options.name
-    command.description = options.description
-    command.parameters = options.parameters
-    command.callback = @options.callback
+    if options.hasIndex("name") then command.name = options.name
+    if not options.hasIndex("name") then return Error.New("Missing required parameter: name")
+    if options.hasIndex("description") then command.description = options.description
+    if not options.hasIndex("description") then command.description = ""
+    if options.hasIndex("parameters") then command.parameters = options.parameters
+    if not options.hasIndex("parameters") then command.parameters = []
+    if options.hasIndex("callback") then command.callback = @options.callback
+    if not options.hasIndex("callback") then return Error.New("Missing required parameter: callback")
+    if options.hasIndex("permissions") then command.permissions = {
+        "object": "file",
+        "privilege": "guest"
+    } + options.permissions
+    if not options.hasIndex("permissions") then command.permissions = {
+        "object": "file",
+        "privilege": "guest"
+    }
     return command
 end function

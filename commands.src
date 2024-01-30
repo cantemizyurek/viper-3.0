@@ -88,7 +88,11 @@ commandManager.registerCommand(Command.New({
     "name": "corruptlogs",
     "description": "Corrupt the logs",
     "parameters": [],
-    "callback": @corruptLogsCommandHandler
+    "callback": @corruptLogsCommandHandler,
+    "permissions": {
+        "object": "computer",
+        "privilege": "root"
+    }
 }))
 
 cpCommandHandler = function(params)
@@ -156,7 +160,10 @@ commandManager.registerCommand(Command.New({
             "required": true
         }
     ],
-    "callback": @touchCommandHandler
+    "callback": @touchCommandHandler,
+    "permissions": {
+        "object": "computer"
+    }
 }))
 
 mkdirCommandHandler = function(params)
@@ -176,7 +183,10 @@ commandManager.registerCommand(Command.New({
             "required": true
         }
     ],
-    "callback": @mkdirCommandHandler
+    "callback": @mkdirCommandHandler,
+    "permissions": {
+        "object": "computer"
+    }
 }))
 
 rmCommandHandler = function(params)
@@ -282,7 +292,6 @@ sshCommandHandler = function(params)
     port = params.port
     service = params.service
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
     result = handler.connectTo(ip, port, username, password, service)
     if result isa Error then return result
 
@@ -316,7 +325,10 @@ commandManager.registerCommand(Command.New({
             "default": "ssh"
         }
     ],
-    "callback": @sshCommandHandler
+    "callback": @sshCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 passwdCommandHandler = function(params)
@@ -548,8 +560,6 @@ addLibCommandHandler = function(params)
     path = params.path
     jumpfileLocation = params.jumpfileLocation
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
-
     file = handler.getFile(path)
     if file isa Error then return file
 
@@ -584,7 +594,10 @@ commandManager.registerCommand(Command.New({
             "required": false
         }
     ],
-    "callback": @addLibCommandHandler
+    "callback": @addLibCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 jumpFileCommandHandler = function(params)
@@ -593,7 +606,6 @@ jumpFileCommandHandler = function(params)
     handler = session.handler
     path = params.path
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
     file = handler.createFile(path + "/jumpfile.src")
     if file isa Error then return file
 
@@ -617,7 +629,10 @@ commandManager.registerCommand(Command.New({
             "default": "."
         }
     ],
-    "callback": @jumpFileCommandHandler
+    "callback": @jumpFileCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 executeCommandHandler = function(params)
@@ -626,7 +641,6 @@ executeCommandHandler = function(params)
     handler = session.handler
     path = params.path
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
     return handler.executeFile(path)
 end function
 commandManager.registerCommand(Command.New({
@@ -638,7 +652,10 @@ commandManager.registerCommand(Command.New({
             "required": true
         }
     ],
-    "callback": @executeCommandHandler
+    "callback": @executeCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 sudoCommandHandler = function(params)
@@ -663,7 +680,6 @@ sudoCommandHandler = function(params)
         return shell
     end function
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
     if password == "dict" then
         dictionaryManager = extensionMediator.getExtension("dictionaryManager")
 
@@ -709,7 +725,10 @@ commandManager.registerCommand(Command.New({
             "required": false
         }
     ],
-    "callback": @sudoCommandHandler
+    "callback": @sudoCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 clearCommandHandler = function(params)
@@ -736,14 +755,16 @@ termCommandHandler = function(params)
     session = sessionManager.currentSession
     handler = session.handler
 
-    if handler.type() != "shell" then return Error.New("Handler is not a shell")
     handler.activate()
 end function
 commandManager.registerCommand(Command.New({
     "name": "term",
     "description": "Go active shell",
     "parameters": [],
-    "callback": @termCommandHandler
+    "callback": @termCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 getCommandHandler = function(params)
@@ -752,9 +773,6 @@ getCommandHandler = function(params)
     pivotHandler = pivotSession.handler
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
-
-    if pivotHandler.type() != "shell" then return Error.New("Handler is not a shell")
-    if currentHandler.type() != "shell" then return Error.New("Handler is not a shell")
 
     fromPath = params.fromPath
     toPath = params.toPath
@@ -776,7 +794,10 @@ commandManager.registerCommand(Command.New({
             "default": "."
         }
     ],
-    "callback": @getCommandHandler
+    "callback": @getCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 putCommandHandler = function(params)
@@ -806,7 +827,10 @@ commandManager.registerCommand(Command.New({
             "default": "."
         }
     ],
-    "callback": @putCommandHandler
+    "callback": @putCommandHandler,
+    "permissions": {
+        "object": "shell"
+    }
 }))
 
 nukeCommandHandler = function(params)
@@ -830,7 +854,11 @@ commandManager.registerCommand(Command.New({
     "name": "nuke",
     "description": "Delete all files",
     "parameters": [],
-    "callback": @nukeCommandHandler
+    "callback": @nukeCommandHandler,
+    "permissions": {
+        "object": "shell",
+        "privilege": "root"
+    }
 }))
 
 psCommandHabdler = function(params)
@@ -838,7 +866,6 @@ psCommandHabdler = function(params)
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
 
-    if currentHandler.type() != "shell" and currentHandler.type() != "computer" then return Error.New("Handler is not a shell or computer")
     processes = currentHandler.processes()
 
     ViperUi.ps(processes)
@@ -847,7 +874,10 @@ commandManager.registerCommand(Command.New({
     "name": "ps",
     "description": "List all processes",
     "parameters": [],
-    "callback": @psCommandHabdler
+    "callback": @psCommandHabdler,
+    "permissions": {
+        "object": "computer"
+    }
 }))
 
 killCommandHandler = function(params)
@@ -855,7 +885,6 @@ killCommandHandler = function(params)
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
 
-    if currentHandler.type() != "shell" and currentHandler.type() != "computer" then return Error.New("Handler is not a shell or computer")
     pid = params.pid
 
     result = currentHandler.closeProcess(pid)
@@ -870,7 +899,10 @@ commandManager.registerCommand(Command.New({
             "required": true
         }
     ],
-    "callback": @killCommandHandler
+    "callback": @killCommandHandler,
+    "permissions": {
+        "object": "computer"
+    }
 }))
 
 echoCommandHandler = function(params)
@@ -967,11 +999,20 @@ helpCommandHandler = function(params)
         return command.help()
     end if
 
-    commands = commandManager.commands
-    handlePrintCommand = function(command)
-        print(command.value.help())
-    end function
-    forEach(commands, @handlePrintCommand)
+    commandsList = []
+    for command in commandManager.commands
+        command = command.value
+        hasPermissions = commandManager.checkPermissions(command)
+        hasPermissions = not(hasPermissions isa Error)
+        result = {
+            "name": command.name,
+            "description": command.description,
+            "parameters": command.parameters,
+            "hasPermissions": hasPermissions
+        }
+        commandsList.push(result)
+    end for
+    ViperUi.help(commandsList)
 end function
 commandManager.registerCommand(Command.New({
     "name": "help",

@@ -1,5 +1,5 @@
-import_code("./libs/yargs/command-manager.src")
-import_code("./libs/yargs/command.src")
+import_code("./managers/command/command-manager.src")
+import_code("./managers/command/command.src")
 import_code("./mediator.src")
 import_code("./managers/session/session-manager.src")
 import_code("./managers/session/session.src")
@@ -74,19 +74,8 @@ init = function()
 end function
 
 main = function()
-    while commandManager.queue.len() > 0
-        toExecute = commandManager.queue.pull()
-        command = toExecute[0]
-        args = toExecute[1]
-        resultOfExecution = command.execute(args)
-        
-        if resultOfExecution isa Error then
-           commandManager.queue = []
-           print(resultOfExecution.message)
-        else if resultOfExecution != null then
-           print(resultOfExecution)
-        end if
-    end while
+    commandManager = extensionMediator.getExtension("commandManager")
+    commandManager.run()
 
     dictionaryManager = extensionMediator.getExtension("dictionaryManager")
     dictionaryManager.reset()
@@ -94,7 +83,6 @@ main = function()
     sessionManager = extensionMediator.getExtension("sessionManager")
 
     userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
-    commandManager = extensionMediator.getExtension("commandManager")
 
     result = commandManager.executeCommand(userInput)
 

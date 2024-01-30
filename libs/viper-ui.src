@@ -317,6 +317,36 @@ ViperUi.nmap = function(devices, router)
 
     print()
 end function
+ViperUi.help = function (commands)
+    keys = ["command", "arguments", "description" ]
+
+    handleGetItem = function(command)
+        result = {}
+        commandNameColor = COLORS.RED
+        if command.hasPermissions then commandNameColor = COLORS.GREEN
+        result.command = {
+            "text": command.name,
+            "color": commandNameColor
+        }
+        parametersString = ""
+        for parameter in command.parameters
+            if parameter.required then parametersString = parametersString + " <" + parameter.name + ">"
+            if not parameter.required then parametersString = parametersString + " [" + parameter.name + "]"
+        end for
+        result.arguments = {
+            "text": parametersString,
+            "color": COLORS.BLUE
+        }
+        result.description = {
+            "text": command.description,
+            "color": COLORS.GRAY
+        }
+        return result
+    end function
+    items = map(commands, @handleGetItem)
+
+    displayTable(keys, items)
+end function
 ViperUi.displaySession = function(session)
     handler = session.handler
     ip = session.data.ip
