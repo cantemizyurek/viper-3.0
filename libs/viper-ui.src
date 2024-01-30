@@ -6,7 +6,8 @@ COLORS = {
     "GREEN": "#0f0",
     "YELLOW": "#FFFC33",
     "BLUE": "#058FAB",
-    "GRAY": "#343434"
+    "GRAY": "#343434",
+    "WHITE": "#fff"
 }
 
 addSpaceString = function (string, spaces)
@@ -317,6 +318,34 @@ ViperUi.nmap = function(devices, router)
 
     print()
 end function
+ViperUi.helpSingle = function (command)
+    commandNameColor = COLORS.RED
+    if command.hasPermissions then commandNameColor = COLORS.GREEN
+
+    parametersString = ""
+    for parameter in command.parameters
+        if parameter.required then parametersString = parametersString + " [" 
+        if not parameter.required then parametersString = parametersString + " ("
+
+        if parameter.type == "options" then
+            optionsString = ""
+            for option in parameter.options
+                optionsString = optionsString + option.key + "|"
+            end for
+            optionsString = optionsString[:-1]
+            parametersString = parametersString + optionsString
+        else
+            parametersString = parametersString + parameter.name
+        end if
+
+        if parameter.required then parametersString = parametersString + "]"
+        if not parameter.required then parametersString = parametersString + ")"
+    end for
+
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Command" + "</color>" + ": " + "<color=" + commandNameColor + ">" + command.name + " " + parametersString + "</color>" + "</color>"
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Description" + "</color>" + ": " + "<color=" + COLORS.WHITE + ">" + command.description + "</color>" + "</color>"
+    print()
+end function
 ViperUi.help = function (commands)
     keys = ["command", "arguments", "description" ]
 
@@ -330,8 +359,8 @@ ViperUi.help = function (commands)
         }
         parametersString = ""
         for parameter in command.parameters
-            if parameter.required then parametersString = parametersString + " <" 
-            if not parameter.required then parametersString = parametersString + " ["
+            if parameter.required then parametersString = parametersString + " ["
+            if not parameter.required then parametersString = parametersString + " ("
 
             if parameter.type == "options" then
                 optionsString = ""
@@ -344,8 +373,8 @@ ViperUi.help = function (commands)
                 parametersString = parametersString + parameter.name
             end if
 
-            if parameter.required then parametersString = parametersString + ">"
-            if not parameter.required then parametersString = parametersString + "]"
+            if parameter.required then parametersString = parametersString + "]"
+            if not parameter.required then parametersString = parametersString + ")"
         end for
         result.arguments = {
             "text": parametersString,

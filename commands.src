@@ -1074,7 +1074,16 @@ helpCommandHandler = function(params)
     if commandName != null then
         command = commandManager.getCommand(commandName)
         if command isa Error then return command
-        return command.help()
+        hasPermission = commandManager.checkPermissions(command)
+        hasPermission = not(hasPermission isa Error)
+        result = {
+            "name": command.name,
+            "description": command.description,
+            "parameters": command.parameters,
+            "hasPermissions": hasPermission
+        }
+        ViperUi.helpSingle(result)
+        return
     end if
 
     commandsList = []
