@@ -28,6 +28,7 @@ end function
 CommandManager.run = function()
     while self.queue.len() > 0
         resultOfExecution = self.tick()
+        if resultOfExecution isa Error then self.queue = []
         self.printCommandResult(resultOfExecution)
     end while
 end function
