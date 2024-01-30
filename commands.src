@@ -731,9 +731,13 @@ commandManager.registerCommand(Command.New({
             "name": "user",
             "required": true
         }),
-        Parameter.New({
+        OptionsParameter.New({
             "name": "password",
-            "required": true
+            "required": true,
+            "options": {
+                "password": null,
+                "dict": "dict"
+            }
         }),
         Parameter.New({
             "name": "jumpfileLocation",
