@@ -9,7 +9,7 @@ File = {}
 File.file = null
 File.setPermissions = function (newPermissions, recersive = false)
     result = self.file.chmod(newPermissions, recersive)
-    if not(result) then return Error.New(result)
+    if typeof(result) == "string" then return Error.New(result)
 end function
 File.hasPermission = function (permission)
     return self.file.has_permission(permission)

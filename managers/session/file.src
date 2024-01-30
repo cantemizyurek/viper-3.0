@@ -39,7 +39,7 @@ end function
 FileSession.setPermissions = function(path, permissions, recersive = false)
     file = self.getFile(path)
     if file isa Error then return file
-    return file.setPermissions(permissions, recersive)ßß
+    return file.setPermissions(permissions, recersive)
 end function
 FileSession.permissions = function(path)
     file = self.getFile(path)
