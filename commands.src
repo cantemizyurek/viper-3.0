@@ -859,7 +859,6 @@ commandManager.registerCommand(Command.New({
     "parameters": [],
     "callback": @nukeCommandHandler,
     "permissions": {
-        "object": "shell",
         "privilege": "root"
     }
 }))
