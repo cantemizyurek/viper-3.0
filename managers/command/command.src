@@ -20,6 +20,7 @@ OptionsParameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
     if not(args.hasIndex(index)) then return self.options[self.default]
     arg = args[index]
+    if self.options.hasIndex(self.name) and not(self.options.hasIndex(arg)) then return arg
     if not(self.options.hasIndex(arg)) then return Error.New("Invalid option: " + arg)
     return self.options[arg]
 end function
