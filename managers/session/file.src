@@ -103,7 +103,7 @@ FileSession.type = function()
     return "file"
 end function
 FileSession.privilege = function()
-    if self.user != "root" or self.user != "guest" then return "user"
+    if self.user != "root" and self.user != "guest" then return "user"
     return self.user
 end function
 FileSession.New = function(file)

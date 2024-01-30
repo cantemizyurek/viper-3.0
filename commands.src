@@ -355,7 +355,10 @@ commandManager.registerCommand(Command.New({
             "required": true
         }
     ],
-    "callback": @passwdCommandHandler
+    "callback": @passwdCommandHandler,
+    "permissions": {
+        "object": "computer"
+    }
 }))
 
 exploitScanCommandHandler = function(params)

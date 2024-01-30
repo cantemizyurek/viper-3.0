@@ -1,5 +1,5 @@
-import_code("../error.src")
-import_code("../functional.src")
+import_code("../../libs/error.src")
+import_code("../../libs/functional.src")
 
 Command = {}
 Command.name = null
