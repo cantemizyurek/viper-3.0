@@ -729,7 +729,9 @@ sudoCommandHandler = function(params)
             shell = get_shell(user, password)
             if shell == null then return Error.New("Failed to login")
         else
-            handler.executeFile(jumpfileLocation, "login " + user + " " + password)
+            isDict = "false"
+            if password == "dict" then isDict = "true"
+            handler.executeFile(jumpfileLocation, "login " + user + " " + password + " " + isDict)
             if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
             shell = get_custom_object.user
             if shell == null then return Error.New("Failed to login")
@@ -745,7 +747,7 @@ sudoCommandHandler = function(params)
 
         if jumpfileLocation != null then
             get_custom_object.passwords = dictionaryManager.passwords
-            shell = logIn(user)
+            shell = logIn(user, "dict")
         else
             password = dictionaryManager.get()
 
