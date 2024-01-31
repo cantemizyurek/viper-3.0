@@ -12,11 +12,6 @@ CommandManager.getCommand = function(command)
 end function
 CommandManager.executeCommand = function(str)
     macroManager = self.mediator.getExtension("macroManager")
-    if str.indexOf("@") == 0 then
-        result = macroManager.runMacro(slice(str,1))
-        if result isa Error then return result
-        return
-    end if
 
     command = str.split(" ")[0]
     args = slice(str.split(" "), 1).join(" ")
@@ -27,6 +22,11 @@ CommandManager.executeCommand = function(str)
         if newArgs.len() > 0 then newArgs = newArgs.join(" ") + " "
         if newArgs.len() == 0 then newArgs = ""
         args = newArgs + args
+    end if
+    if command.indexOf("@") == 0 then
+        result = macroManager.runMacro(slice(command, 1))
+        if result isa Error then self.queue.push(result)
+        return
     end if
     if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
     command = self.commands[command]
@@ -42,6 +42,7 @@ end function
 CommandManager.tick = function()
     if self.queue.len() == 0 then return
     command = self.queue.pull()
+    if command isa Error then return command
     hasPermissions = self.checkPermissions(command[0])
     if hasPermissions isa Error then return hasPermissions
     return command[0].execute(command[1])

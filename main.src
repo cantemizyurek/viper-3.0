@@ -85,11 +85,6 @@ main = function()
     userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
 
     result = commandManager.executeCommand(userInput)
-
-    if result isa Error then 
-        commandManager.queue = []
-        return print(result.message)
-    end if
 end function
 
 init()
