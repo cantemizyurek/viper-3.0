@@ -1,5 +1,5 @@
 import_code("./jumpfile/jumpfile-text.src")
-import_code("./libs/random-ip.src")
+import_code("./utils/random-ip.src")
 import_code("./managers/command/command.src")
 
 lsCommandHandler = function(params)
