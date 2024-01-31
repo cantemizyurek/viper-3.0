@@ -38,13 +38,14 @@ Router.devices = function()
             result.open = not(port.is_closed())
             result.port = port.port_number()
             handleSomePort = function (p)
-                if (p.port_number == result.port and p.get_lan_ip == port.get_lan_ip) or port.port_number == 0 then return true
+                if p.port_number == result.port and p.get_lan_ip == port.get_lan_ip then return true
                 return false
             end function
             result.forwarded = some(outer.router.used_ports(), @handleSomePort)
             if port.port_number == 0 then
                 result.type = "kernel_router"
                 result.version = router.kernel_version()
+                result.forwarded = true
                 return result
             else
                 result.type = router.port_info(port).split(" ")[0]
