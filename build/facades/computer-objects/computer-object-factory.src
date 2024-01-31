@@ -1,0 +1,12 @@
+computerObjectFactory=function(object)
+if typeof(object)=="file" then
+return File.New(object)
+end if
+if typeof(object)=="computer" then
+return Computer.New(object)
+end if
+if typeof(object)=="shell" then
+return Shell.New(object)
+end if
+return Error.New("Invalid object type")
+end function

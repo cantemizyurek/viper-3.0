@@ -1,0 +1,17 @@
+Crypto={}
+Crypto.crypto=null
+Crypto.decipher=function(str)
+result=self.crypto.decipher(str)
+if result==null then
+return Error.New("Decipher failed")
+end if
+return result
+end function
+Crypto.New=function(object)
+if typeof(object)!="cryptoLib" then
+return Error.New("Invalid crypto object")
+end if
+result=new Crypto
+result.crypto=object
+return result
+end function

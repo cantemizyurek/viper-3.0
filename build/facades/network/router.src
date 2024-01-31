@@ -1,0 +1,75 @@
+Router={}
+Router.router=null
+Router.id=function()
+return self.router.bssid_name
+end function
+Router.name=function()
+return self.router.essid_name
+end function
+Router.version=function()
+return self.router.kernel_version
+end function
+Router.ip=function()
+result={}
+result.local=self.router.local_ip
+result.public=self.router.public_ip
+return result
+end function
+Router.devices=function()
+ips=self.router.devices_lan_ip
+router=self.router
+handleAddDevice=function(ip)
+device={}
+device.ip={"local":ip,"public":router.public_ip}
+router=outer.router
+ports=outer.router.device_ports(ip)
+handleAddPort=function(port)
+result={}
+result.open=not (port.is_closed)
+result.port=port.port_number
+handleSomePort=function(p)
+if p.port_number==result.port and p.get_lan_ip==port.get_lan_ip then
+return true
+end if
+return false
+end function
+result.forwarded=some(outer.router.used_ports,@handleSomePort)
+if port.port_number==0 then
+result.type="kernel_router"
+result.version=router.kernel_version
+result.forwarded=true
+return result
+else
+result.type=router.port_info(port).split(" ")[0]
+result.version=router.port_info(port).split(" ")[1]
+end if
+return result
+end function
+isRouter=function(port)
+return port.port_number==8080
+end function
+if some(ports,@isRouter) then
+newPorts=[]
+if outer.router.local_ip==ip then
+newPorts.push({"port_number":0,"is_closed":false,"get_lan_ip":@outer.router.local_ip})
+end if
+newPorts.push(find(ports,@isRouter))
+device.ports=map(newPorts,@handleAddPort)
+else
+device.ports=map(ports,@handleAddPort)
+end if
+return device
+end function
+return map(ips,@handleAddDevice)
+end function
+Router.New=function(ip)
+if not (is_valid_ip(ip)) then
+return Error.New("Invalid ip")
+end if
+result=new Router
+result.router=get_router(ip)
+if result.router==null then
+return Error.New("Invalid ip")
+end if
+return result
+end function
