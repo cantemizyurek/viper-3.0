@@ -3,6 +3,18 @@ import_code("./lib-manager.src")
 
 MetaxploitManager = {}
 MetaxploitManager.mediator = null
+MetaxploitManager.rShellList = function ()
+    libManager = self.mediator.getExtension("libManager")
+    currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
+    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
+    return currentMetaxploit.rShellList()
+end function
+MetaxploitManager.connectRShell = function (address, port)
+    libManager = self.mediator.getExtension("libManager")
+    currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
+    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
+    return currentMetaxploit.connectRShell(address, port)
+end function
 MetaxploitManager.getLib = function (address, port)
     libManager = self.mediator.getExtension("libManager")
     currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib

@@ -4,6 +4,18 @@ import_code("../computer-objects/computer-object-factory.src")
 
 Metaxploit = {}
 Metaxploit.metaxploit =  null
+Metaxploit.rShellList = function ()
+    objects = self.metaxploit.rshell_server()
+    if typeof(objects) == "string" then return Error.New(objects)
+    return map(objects, @computerObjectFactory)
+end function
+Metaxploit.connectRShell = function (address, port)
+    if not is_valid_ip(address) then return Error.New("Invalid IP address")
+    if typeof(port) != "number" and typeof(port) != "string" then return Error.New("Invalid port")
+    if typeof(port) == "string" then port = to_int(port)
+    result = self.metaxploit.rshell_client(address, port, "ps")
+    if result == false then return Error.New("An error occured while connecting to the server")
+end function
 Metaxploit.getLib = function (address, port)
     if is_valid_ip(address) then
         if port == null then return Error.New("Port is null")

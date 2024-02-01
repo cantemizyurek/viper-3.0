@@ -15,6 +15,7 @@ Session.data = {
     "ip": null
 }
 Session.New = function (handler, data)
+    if handler isa Session then return handler
     result = new Session
     
     if typeof(handler) == "file" then handler = computerObjectFactory(handler)

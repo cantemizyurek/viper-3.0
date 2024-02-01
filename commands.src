@@ -1,6 +1,7 @@
 import_code("./jumpfile/jumpfile-text.src")
 import_code("./utils/random-ip.src")
 import_code("./managers/command/command.src")
+import_code("./managers/session/session.src")
 
 lsCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
@@ -1112,6 +1113,55 @@ commandManager.registerCommand(Command.New({
         "object": "file",
         "privilege": "root"
     }
+}))
+
+msfvenomCommandHandler = function(params)
+    ip = params.ip
+    port = params.port
+    
+    metaxploitManager = extensionMediator.getExtension("metaxploitManager")
+    return metaxploitManager.connectRShell(ip, port)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "msfvenom",
+    "description": "Create a payload",
+    "parameters": [
+        Parameter.New({
+            "name": "ip",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "port",
+            "required": false,
+            "default": 1222,
+            "type": PARAMETER_TYPES.NUMBER
+        })
+    ],
+    "callback": @msfvenomCommandHandler
+}))
+
+msfconsoleCommandHandler = function(params)
+    metaxploitManager = extensionMediator.getExtension("metaxploitManager")
+    shells = metaxploitManager.rShellList()
+    if shells isa Error then return shells
+    if shells.len() == 0 then return Error.New("No shells available")
+    handleShellsToSession = function (shell)
+        return Session.New(shell, {})
+    end function
+    ViperUi.msfConsole(map(shells, @handleShellsToSession))
+    input = user_input(ViperUi.msfConsoleInput)
+    inputNumber = to_int(input)
+    if inputNumber >= shells.len() or typeof(inputNumber) == "string" or inputNumber < 0 then return Error.New("Invalid input") 
+    session = Session.New(shells[inputNumber], {})
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    sessionManager.addSession(session)
+    sessionManager.setCurrentSession(sessionManager.getSessionIndex(session))
+end function
+commandManager.registerCommand(Command.New({
+    "name": "msfconsole",
+    "description": "Starts a listiner for incomming rshells.",
+    "parameters": [],
+    "callback": @msfconsoleCommandHandler
 }))
 
 helpCommandHandler = function(params)

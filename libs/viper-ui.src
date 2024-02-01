@@ -318,6 +318,38 @@ ViperUi.nmap = function(devices, router)
 
     print()
 end function
+ViperUi.msfConsole = function (shells)
+    keys = ["id", "public ip", "local ip", "user"]
+    i = 0
+    handleGetItem = function(shell)
+        result = {}
+        result.id = {
+            "text": str(i),
+            "color": COLORS.YELLOW
+        }
+        result["public ip"] = {
+            "text":  shell.handler.ip.public,
+            "color": COLORS.BLUE
+        }
+        result["local ip"] = {
+            "text": shell.handler.ip.local,
+            "color": COLORS.BLUE
+        }
+        result.user = {
+            "text": shell.handler.user,
+            "color": COLORS.GREEN
+        }
+
+        outer.i = outer.i + 1
+        return result
+    end function
+    items = map(shells, @handleGetItem)
+
+    displayTable(keys, items)
+end function
+ViperUi.msfConsoleInput = function ()
+    return "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "ID" + "</color>" + ": " + "</color>"
+end function
 ViperUi.helpSingle = function (command)
     commandNameColor = COLORS.RED
     if command.hasPermissions then commandNameColor = COLORS.GREEN
@@ -402,6 +434,6 @@ end function
 ViperUi.init = function ()
     print(viperCoolText)
     print()
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.1.2" + "</color>" + "</color>"
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.1.3" + "</color>" + "</color>"
     print()
 end function
