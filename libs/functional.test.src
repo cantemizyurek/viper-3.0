@@ -72,3 +72,10 @@ test "flat", function()
 
     expect(b).toBe([1, 2, 3, 4, 5, 6])
 end function
+
+test "distinct", function()
+    a = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]
+    b = distinct(a)
+
+    expect(b).toBe([1, 2, 3, 4, 5, 6])
+end function

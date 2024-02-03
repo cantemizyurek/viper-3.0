@@ -24,9 +24,18 @@ map = function(list, callback)
     if typeof(list) == "map" then newList = {}
     if typeof(list) == "list" then newList = []
     if isIterable(list) == false then return Error.New("Invalid Type")
-    for v in list
-        newList.push(callback(v))
-    end for
+    if typeof(list) == "map" then
+        for item in list
+            k = item.key
+            v = item.value
+            newList[k] = callback(item)
+        end for
+    end if
+    if typeof(list) == "list" then
+        for v in list
+            newList.push(callback(v))
+        end for
+    end if
     return newList
 end function
 
@@ -108,5 +117,28 @@ flat = function(list)
             newList.push(v)
         end if
     end for
+    return newList
+end function
+
+distinct = function(list)
+    if typeof(list) == "map" then newList = {}
+    if typeof(list) == "list" then newList = []
+    if isIterable(list) == false then return Error.New("Invalid Type")
+    if typeof(list) == "map" then
+        for item in list
+            k = item.key
+            v = item.value
+            if not newList.hasIndex(k) then
+                newList[k] = v
+            end if
+        end for
+    end if
+    if typeof(list) == "list" then
+        for v in list
+            if newList.indexOf(v) == null then
+                newList.push(v)
+            end if
+        end for
+    end if
     return newList
 end function

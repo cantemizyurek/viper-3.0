@@ -380,35 +380,16 @@ nmapCommandHandler = function(params)
     if router isa Error then return router
     devices = router.devices()
 
-    allDevices = []
+    allPorts = []
     handleAddDevice = function(device)
-        if device.ports.len == 0 then
-            allDevices.push({
-                "ip": device.ip,
-                "port": "none",
-                "type": "none",
-                "version": "none",
-                "open": false,
-                "forwarded": false
-            })
-        else
-            for port in device.ports
-                allDevices.push({
-                    "ip": device.ip,
-                    "port": port.port,
-                    "type": port.type,
-                    "version": port.version,
-                    "open": port.open,
-                    "forwarded": port.forwarded
-                })
-            end for
-        end if
+        if device.value.len == 0 then allPorts.push({"port": "none", "open": false, "forwarded": false, "local": device.key, "type": "none", "version": "none"})
+        for port in device.value
+            allPorts.push(port)
+        end for
     end function
     forEach(devices, @handleAddDevice)
 
-    allDevices.sort("port")
-
-    ViperUi.nmap(allDevices, router)
+    ViperUi.nmap(allPorts, router)
 end function
 commandManager.registerCommand(Command.New({
     "name": "nmap",
@@ -526,16 +507,23 @@ exploitScanCommandHandler = function(params)
         if is_lan_ip(address) then address = libManager.getCurrentLib("metaxploit").data.ip.public
         if port == null then return Error.New("Port is required")
         router = Router.New(address)
+        if router isa Error then return router
         devices = router.devices()
 
         handleFindPort = function(device)
-            for p in device.ports
+            for p in device.value
                 if p.open and p.port == to_int(port) then return true
             end for
             return false
         end function
         device = find(devices, @handleFindPort)
-        address = device.ip
+        if device == null then return Error.New("Port is not open/found")
+        localIp = device.key
+        publicIp = address
+        address = {
+            "local": device.key,
+            "public": publicIp
+        }
     end if
 
     sessionManager = extensionMediator.getExtension("sessionManager")

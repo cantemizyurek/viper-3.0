@@ -267,7 +267,7 @@ ViperUi.nmap = function(devices, router)
     handleGetItem = function(device)
         result = {}
         result.host = {
-            "text": device.ip.local,
+            "text": device.local,
             "color": COLORS.GREEN
         }
         result.port = {

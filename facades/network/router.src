@@ -20,59 +20,59 @@ Router.ip = function()
 end function
 Router.devices = function()
     ips = self.router.devices_lan_ip()
-
     router = self.router
 
-    handleAddDevice = function (ip)
-        device = {}
-        device.ip = {
-            "local": ip,
-            "public": router.public_ip()
-        }
-
-        router = outer.router
-        ports = outer.router.device_ports(ip)
-
-        handleAddPort = function (port)
-            result = {}
-            result.open = not(port.is_closed())
-            result.port = port.port_number()
-            handleSomePort = function (p)
-                if p.port_number == result.port and p.get_lan_ip == port.get_lan_ip then return true
-                return false
-            end function
-            result.forwarded = some(outer.router.used_ports(), @handleSomePort)
-            if port.port_number == 0 then
-                result.type = "kernel_router"
-                result.version = router.kernel_version()
-                result.forwarded = true
-                return result
-            else
-                result.type = router.port_info(port).split(" ")[0]
-                result.version = router.port_info(port).split(" ")[1]
-            end if
-            return result
-        end function
-
-        isRouter = function (port)
-            return port.port_number() == 8080
-        end function
-        if some(ports, @isRouter) then
-            newPorts = []
-
-            if outer.router.local_ip() == ip then
-                newPorts.push({"port_number": 0, "is_closed": false, "get_lan_ip": @outer.router.local_ip})
-            end if
-            newPorts.push(find(ports, @isRouter))
-
-            device.ports = map(newPorts, @handleAddPort)
-        else
-            device.ports = map(ports, @handleAddPort)
-        end if
-
-        return device
+    handleGetDevicePorts = function(device)
+        result = {}
+        result.ip = device
+        result.ports = router.device_ports(device)
+        return result
     end function
-    return map(ips, @handleAddDevice)
+    devicesWithPorts = map(ips, @handleGetDevicePorts)
+
+    forwardedPorts = router.used_ports()
+    handleFindPortInUsedPorts = function(port)
+        handleHasPort = function(usedPort)
+            return usedPort.get_lan_ip == port.local and usedPort.port_number == port.port
+        end function
+        return some(forwardedPorts, @handleHasPort)
+    end function
+
+    getPortInfo = function(port)
+        result = {}
+        result.port = port.port_number
+        result.open = not(port.is_closed)
+        result.local = port.get_lan_ip
+        result.forwarded = handleFindPortInUsedPorts(result)
+        result.type = router.port_info(port).split(" ")[0]
+        result.version = router.port_info(port).split(" ")[1]
+        return result
+    end function
+    handleReduceDevicePorts = function(acc, port)
+        if not acc.hasIndex(port.local) then acc[port.local] = []
+        acc[port.local].push(port)
+        return acc
+    end function
+
+    handleGetPorts = function(device)
+        return device.ports
+    end function
+    handleRemoveDublicates = function(device)
+        return distinct(device.value)
+    end function
+    handleFilterNullPorts = function(port)
+        return port != null
+    end function
+    devices = reduce(map(filter(flat(map(devicesWithPorts, @handleGetPorts)), @handleFilterNullPorts), @getPortInfo), @handleReduceDevicePorts, {})
+    devices = map(devices, @handleRemoveDublicates)
+
+    for ip in ips
+        if not devices.hasIndex(ip) then devices[ip] = []
+    end for
+
+    if not devices.hasIndex(self.ip.local) then devices[self.ip.local] = []
+    devices[self.ip.local].push({"port": 0, "open": true, "forwarded": true, "local": self.ip.local, "type": "kernel_router", "version": self.version()})
+    return devices
 end function
 Router.New = function(ip)
     if not(is_valid_ip(ip)) then return Error.New("Invalid ip")
