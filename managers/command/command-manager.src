@@ -93,7 +93,7 @@ CommandManager.addAlias = function(alias, str)
     self.aliases[alias] = str
 end function
 CommandManager.removeAlias = function(alias)
-    self.aliases[alias] = null
+    self.aliases.remove(alias)
 end function
 CommandManager.New = function()
     result = new CommandManager
