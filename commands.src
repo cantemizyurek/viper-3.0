@@ -47,6 +47,102 @@ commandManager.registerCommand(Command.New({
     "callback": @cdCommandHandler
 }))
 
+chmodCommandHandler = function (params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    fpath = params.fpath
+    perms = params.perms
+    recursive = params.recursive
+
+    return handler.setPermissions(fpath, perms, recursive)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "chmod",
+    "description": "Chmods a file or directory.",
+    "parameters": [
+        FlagParameter.New({
+        "name": "recursive",
+        "required": false,
+        "default": "",
+            "flag": "-R"
+        }),
+        Parameter.New({
+            "name": "perms",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "fpath",
+            "required": true
+        })
+    ],
+    "callback": @chmodCommandHandler
+}))
+
+chownCommandHandler = function (params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    fpath = params.fpath
+    newOwner = params.newOwner
+    recursive = params.recursive
+    
+    return handler.setOwner(fpath, newOwner, recursive)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "chown",
+    "description": "Changes the owner of a file or directory.",
+    "parameters": [
+        FlagParameter.New({
+        "name": "recursive",
+        "required": false,
+        "default": "",
+            "flag": "-R"
+        }),
+        Parameter.New({
+            "name": "newOwner",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "fpath",
+            "required": true
+        })
+    ],
+    "callback": @chownCommandHandler
+}))
+
+chgrpCommandHandler = function (params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    fpath = params.fpath
+    newGroup = params.newGroup
+    recursive = params.recursive
+    
+    return handler.setGroup(fpath, newGroup, recursive)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "chgrp",
+    "description": "Changes the group of a file or directory.",
+    "parameters": [
+        FlagParameter.New({
+        "name": "recursive",
+        "required": false,
+        "default": "",
+            "flag": "-R"
+        }),
+        Parameter.New({
+            "name": "newGroup",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "fpath",
+            "required": true
+        })
+    ],
+    "callback": @chgrpCommandHandler
+}))
+
 mvCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession

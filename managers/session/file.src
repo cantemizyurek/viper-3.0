@@ -41,6 +41,16 @@ FileSession.setPermissions = function(path, permissions, recersive = false)
     if file isa Error then return file
     return file.setPermissions(permissions, recersive)
 end function
+FileSession.setOwner = function(path, owner, recersive = false)
+    file = self.getFile(path)
+    if file isa Error then return file
+    return file.setOwner(owner, recersive)
+end function
+FileSession.setGroup = function(path, group, recersive = false)
+    file = self.getFile(path)
+    if file isa Error then return file
+    return file.setGroup(group, recersive)
+end function
 FileSession.permissions = function(path)
     file = self.getFile(path)
     if file isa Error then return file

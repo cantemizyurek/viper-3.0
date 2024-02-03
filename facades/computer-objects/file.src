@@ -11,6 +11,14 @@ File.setPermissions = function (newPermissions, recersive = false)
     result = self.file.chmod(newPermissions, recersive)
     if typeof(result) == "string" then return Error.New(result)
 end function
+File.setOwner = function (newOwner, recersive = false)
+    result = self.file.set_owner(newOwner, recersive)
+    if typeof(result) == "string" then return Error.New(result)
+end function
+File.setGroup = function (newGroup, recersive = false)
+    result = self.file.set_group(newGroup, recersive)
+    if typeof(result) == "string" then return Error.New(result)
+end function
 File.hasPermission = function (permission)
     return self.file.has_permission(permission)
 end function
