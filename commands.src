@@ -733,6 +733,8 @@ sudoCommandHandler = function(params)
         else
             isDict = "false"
             if password == "dict" then isDict = "true"
+            jumpfile = handler.getFile(jumpfileLocation)
+            if jumpfile isa Error then return jumpfile
             handler.executeFile(jumpfileLocation, "login " + user + " " + password + " " + isDict)
             if not get_custom_object.hasIndex("user") then return Error.New("Failed to login")
             shell = get_custom_object.user
