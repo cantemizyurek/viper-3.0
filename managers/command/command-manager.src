@@ -29,7 +29,7 @@ CommandManager.executeCommand = function(str)
         if result isa Error then self.queue.push(result)
         return
     end if
-    if not(hasIndex(self.commands,command)) or self.commands[command] == null then return Error.New("There is no command with the name " + command)
+    if not(hasIndex(self.commands,command)) or self.commands[command] == null then return self.queue.push(Error.New("There is no command with the name " + command))
     command = self.commands[command]
     self.queue.push([command,args])
 end function
