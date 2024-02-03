@@ -22,6 +22,7 @@ CommandManager.executeCommand = function(str)
         if newArgs.len() > 0 then newArgs = newArgs.join(" ") + " "
         if newArgs.len() == 0 then newArgs = ""
         args = newArgs + args
+        return self.executeCommand(command + " " + args)
     end if
     if command.indexOf("@") == 0 then
         result = macroManager.runMacro(slice(command, 1))
