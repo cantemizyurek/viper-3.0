@@ -428,6 +428,7 @@ exploitScanCommandHandler = function(params)
         address = lib.data.ip
     else
         if is_lan_ip(address) then address = libManager.getCurrentLib("metaxploit").data.ip.public
+        if port == null then return Error.New("Port is required")
         router = Router.New(address)
         devices = router.devices()
 
@@ -457,7 +458,7 @@ commandManager.registerCommand(Command.New({
         }),
         Parameter.New({
             "name": "port",
-            "required": true
+            "required": false
         }),
         Parameter.New({
             "name": "options",

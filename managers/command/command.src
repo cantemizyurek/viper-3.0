@@ -20,7 +20,7 @@ OptionsParameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
     if not(args.hasIndex(index)) then return [self.default, index + 1]
     arg = args[index]
-    if self.options.hasIndex(self.name) and not(self.options.hasIndex(arg)) then return arg
+    if self.options.hasIndex(self.name) and not(self.options.hasIndex(arg)) then return [arg, index + 1]
     if not(self.options.hasIndex(arg)) then return Error.New("Invalid option: " + arg)
     return [self.options[arg], index + 1]
 end function
@@ -148,7 +148,7 @@ Command.parseArgsToParameters = function(args)
     index = 0
     for parameter in self.parameters
         results = parameter.handle(args, index)
-        if results isa Error then return result
+        if results isa Error then return results
         result = results[0]
         index = results[1]
         parameters[parameter.name] = result
