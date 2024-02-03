@@ -389,15 +389,22 @@ nmapCommandHandler = function(params)
     end function
     forEach(devices, @handleAddDevice)
 
+    allPorts.sort("port")
+
     ViperUi.nmap(allPorts, router)
 end function
 commandManager.registerCommand(Command.New({
     "name": "nmap",
     "description": "Scan the network for devices",
     "parameters": [
-        Parameter.New({
+        OptionsParameter.New({
             "name": "ip",
-            "required": true
+            "required": false,
+            "options": {
+                "ip": "ip",
+                "random": "random"
+            },
+            "default": "random"
         })
     ],
     "callback": @nmapCommandHandler
