@@ -667,7 +667,12 @@ jumpFileCommandHandler = function(params)
     path = params.path
 
     file = handler.createFile(path + "/jumpfile.src")
-    if file isa Error then return file
+    if file isa Error then
+        handler.delete(path + "/jumpfile.src")
+        if file isa Error then return file
+        file = handler.createFile(path + "/jumpfile.src")
+        if file isa Error then return file
+    end if
 
     file = handler.getFile(path + "/jumpfile.src")
     if file isa Error then return file
