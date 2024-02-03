@@ -5,28 +5,28 @@ MetaxploitManager = {}
 MetaxploitManager.mediator = null
 MetaxploitManager.rShellList = function ()
     libManager = self.mediator.getExtension("libManager")
+    if libManager.getCurrentLib(LIB_TYPES.METAXPLOIT) == null then return Error.New("No metaxploit library loaded")
     currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
-    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
     return currentMetaxploit.rShellList()
 end function
 MetaxploitManager.connectRShell = function (address, port)
     libManager = self.mediator.getExtension("libManager")
+    if libManager.getCurrentLib(LIB_TYPES.METAXPLOIT) == null then return Error.New("No metaxploit library loaded")
     currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
-    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
     return currentMetaxploit.connectRShell(address, port)
 end function
 MetaxploitManager.getLib = function (address, port)
     libManager = self.mediator.getExtension("libManager")
+    if libManager.getCurrentLib(LIB_TYPES.METAXPLOIT) == null then return Error.New("No metaxploit library loaded")
     currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
-    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
     return currentMetaxploit.getLib(address, port)
 end function
 MetaxploitManager.hack = function (address, port, options)
     libManager = self.mediator.getExtension("libManager")
+    if libManager.getCurrentLib(LIB_TYPES.METAXPLOIT) == null then return Error.New("No metaxploit library loaded")
     currentMetaxploit = libManager.getCurrentLib(LIB_TYPES.METAXPLOIT).lib
+    if libManager.getPivotLib(LIB_TYPES.METAXPLOIT) == null then return Error.New("No metaxploit pivot library loaded")
     pivotMetaxploit = libManager.getPivotLib(LIB_TYPES.METAXPLOIT).lib
-    if currentMetaxploit == null then return Error.New("No metaxploit library loaded")
-    if pivotMetaxploit == null then return Error.New("No metaxploit library loaded")
     if is_valid_ip(address) == false then
         sessionManager = self.mediator.getExtension("sessionManager")
         session = sessionManager.currentSession
