@@ -366,6 +366,8 @@ ViperUi.helpSingle = function (command)
             end for
             optionsString = optionsString[:-1]
             parametersString = parametersString + optionsString
+        else if parameter.type == "flag" then
+            parametersString = parametersString + parameter.flag
         else
             parametersString = parametersString + parameter.name
         end if
@@ -401,6 +403,8 @@ ViperUi.help = function (commands)
                 end for
                 optionsString = optionsString[:-1]
                 parametersString = parametersString + optionsString
+            else if parameter.type == "flag" then
+                parametersString = parametersString + parameter.flag
             else
                 parametersString = parametersString + parameter.name
             end if
