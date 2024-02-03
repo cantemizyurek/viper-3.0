@@ -18,11 +18,11 @@ OptionsParameter.type = PARAMETER_TYPES.OPTIONS
 OptionsParameter.options = {}
 OptionsParameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
-    if not(args.hasIndex(index)) then return self.options[self.default]
+    if not(args.hasIndex(index)) then return [self.default, index + 1]
     arg = args[index]
     if self.options.hasIndex(self.name) and not(self.options.hasIndex(arg)) then return arg
     if not(self.options.hasIndex(arg)) then return Error.New("Invalid option: " + arg)
-    return self.options[arg]
+    return [self.options[arg], index + 1]
 end function
 OptionsParameter.New = function(options)
     param = new OptionsParameter
@@ -44,8 +44,8 @@ RestParameter.default = null
 RestParameter.type = PARAMETER_TYPES.REST
 RestParameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
-    if not(args.hasIndex(index)) then return self.default
-    return slice(args, index, args.len()).join(" ")
+    if not(args.hasIndex(index)) then return [self.default, args.len()]
+    return [slice(args, index, args.len()).join(" "), args.len()]
 end function
 RestParameter.New = function(options)
     param = new RestParameter
@@ -65,10 +65,10 @@ FlagParameter.type = PARAMETER_TYPES.FLAG
 FlagParameter.flag = null
 FlagParameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
-    if not(args.hasIndex(index)) then return false
+    if not(args.hasIndex(index)) then return [false, index]
     arg = args[index]
-    if arg == self.flag then return true
-    return false
+    if arg == self.flag then return [true, index + 1]
+    return [false, index]
 end function
 FlagParameter.New = function(options)
     param = new FlagParameter
@@ -76,8 +76,6 @@ FlagParameter.New = function(options)
     if not options.hasIndex("name") then return Error.New("Missing required parameter: name")
     if options.hasIndex("required") then param.required = options.required
     if not options.hasIndex("required") then param.required = false
-    if options.hasIndex("default") then param.default = options.default
-    if not options.hasIndex("default") then param.default = null
     if options.hasIndex("flag") then param.flag = options.flag
     if not options.hasIndex("flag") then return Error.New("Missing required parameter: flag")
     return param
@@ -90,16 +88,16 @@ Parameter.default = null
 Parameter.type = null
 Parameter.handle = function (args, index)
     if not(args.hasIndex(index)) and self.required then return Error.New("Missing required parameter: " + self.name)
-    if not(args.hasIndex(index)) then return self.default
+    if not(args.hasIndex(index)) then return [self.default, index + 1]
     arg = args[index]
-    if self.type == PARAMETER_TYPES.STRING then return arg
+    if self.type == PARAMETER_TYPES.STRING then return [arg, index + 1]
     if self.type == PARAMETER_TYPES.NUMBER then
         if typeof(to_int(arg)) == "string" then return Error.New("Invalid parameter type: " + self.type)
-        return to_int(arg)
+        return [to_int(arg), index + 1]
     end if
     if self.type == PARAMETER_TYPES.BOOLEAN then 
-        if arg == "true" then return true
-        if arg == "false" then return false
+        if arg == "true" then return [true, index + 1]
+        if arg == "false" then return [false, index + 1]
         return Error.New("Invalid parameter type: " + self.type)
     end if
     return Error.New("Invalid parameter type: " + self.type)
@@ -147,11 +145,13 @@ Command.parseArgsToParameters = function(args)
     end function
     args = filter(args, @handleRemoveEmpty)
     if self.parameters.len() == 0 then return parameters
-    for i in range(0, self.parameters.len() - 1)
-        param = self.parameters[i]
-        parameters[param.name] = param.handle(args, i)
-        if parameters[param.name] isa Error then return parameters[param.name]
-        if param.type == PARAMETER_TYPES.REST then break
+    index = 0
+    for parameter in self.parameters
+        results = parameter.handle(args, index)
+        if results isa Error then return result
+        result = results[0]
+        index = results[1]
+        parameters[parameter.name] = result
     end for
     return parameters
 end function
