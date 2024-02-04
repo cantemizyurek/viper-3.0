@@ -11,7 +11,7 @@ lsCommandHandler = function(params)
 
     file = handler.getFile(path)
     if file isa Error then return file
-    if file.type() != "FOLDER" then return Error.New("Path is not a directory")
+    if file.children isa Error then return file.children
 
     ViperUi.ls(file.children)
 end function
