@@ -797,8 +797,9 @@ executeCommandHandler = function(params)
     session = sessionManager.currentSession
     handler = session.handler
     path = params.path
+    parameters = params.parameters
 
-    return handler.executeFile(path)
+    return handler.executeFile(path, parameters)
 end function
 commandManager.registerCommand(Command.New({
     "name": "execute",
@@ -807,6 +808,11 @@ commandManager.registerCommand(Command.New({
         Parameter.New({
             "name": "path",
             "required": true
+        }),
+        RestParameter.New({
+            "name": "parameters",
+            "required": false,
+            "default": ""
         })
     ],
     "callback": @executeCommandHandler,

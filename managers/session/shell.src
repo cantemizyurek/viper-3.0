@@ -5,11 +5,6 @@ import_code("../../utils/getUserFromHandler.src")
 
 ShellSession = new ComputerSession
 ShellSession.shell = null
-ShellSession.executeFile = function(path, params = "")
-    file = self.getFile(path)
-    if file isa Error then return file
-    return self.shell.executeFile(file.path, params)
-end function
 ShellSession.buildFile = function(path, pathOfNewFile)
     file = self.getFile(path)
     if file isa Error then return file
