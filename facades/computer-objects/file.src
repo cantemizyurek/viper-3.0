@@ -113,6 +113,9 @@ end function
 File.owner = function ()
     return self.file.owner()
 end function
+File.group = function ()
+    return self.file.group()
+end function
 File.New = function (file)
     if typeof(file) != "file" then return Error.New("Not able to create file object from non file object")
     result = new self

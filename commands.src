@@ -28,6 +28,29 @@ commandManager.registerCommand(Command.New({
     "callback": @lsCommandHandler
 }))
 
+fsCommandHandler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    path = params.path
+
+    file = handler.getFile(path)
+    if file isa Error then return file
+    ViperUi.fileSystem(file)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "fs",
+    "description": "Display file system information",
+    "parameters": [
+        Parameter.New({
+            "name": "path",
+            "required": false,
+            "default": "/"
+        })
+    ],
+    "callback": @fsCommandHandler
+}))
+
 cdCommandHandler = function(params)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession

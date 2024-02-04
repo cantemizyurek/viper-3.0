@@ -426,6 +426,24 @@ ViperUi.help = function (commands)
 
     displayTable(keys, items)
 end function
+ViperUi.fileSystem = function(file, depth = 0)
+    seperator = ""
+    for i in range(0, depth - 1)
+        if depth == 0 then break
+        seperator = seperator + "――"
+    end for
+    seperator = seperator + "»"
+    print seperator + ViperUi.fileSystemItem(file)
+    if file.children isa Error then return
+    for child in file.children
+        ViperUi.fileSystem(child, depth + 1)
+    end for
+end function
+ViperUi.fileSystemItem = function(file)
+    result = ""
+    result = result + "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.YELLOW + ">" + file.permissions + "</color>" + " " + "<color=" + COLORS.GREEN + ">" + file.owner + "</color>" + " " + "<color=" + COLORS.BLUE + ">" + file.group + "</color>" + " " + "<color=" + COLORS.GRAY + ">" + file.name + "</color>" + " " + "<color=" + COLORS.GRAY + ">" + file.size + "</color>"
+    return result
+end function
 ViperUi.displaySession = function(session)
     handler = session.handler
     ip = session.data.ip
