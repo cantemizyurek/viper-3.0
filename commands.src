@@ -473,7 +473,6 @@ passwdCommandHandler = function(params)
     username = params.username
     password = params.password
 
-    if handler.type() != "computer" and handler.type() != "shell" then return Error.New("Handler is not a computer or higher")
     result = handler.setPassword(username, password)
     if result isa Error then return result
 end function
