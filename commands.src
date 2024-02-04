@@ -10,8 +10,9 @@ lsCommandHandler = function(params)
     path = params.path
 
     file = handler.getFile(path)
-
     if file isa Error then return file
+    if file.type() != "FOLDER" then return Error.New("Path is not a directory")
+
     ViperUi.ls(file.children)
 end function
 commandManager.registerCommand(Command.New({
