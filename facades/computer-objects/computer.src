@@ -29,7 +29,7 @@ Computer.createFile = function(path, name)
     if typeof(result) == "string" then return Error.New(result)
 end function
 Computer.addUser = function(user, password)
-    result = self.computer.add_user(user, password)
+    result = self.computer.create_user(user, password)
     if typeof(result) == "string" then return Error.New(result)
 end function
 Computer.deleteUser = function(user)
