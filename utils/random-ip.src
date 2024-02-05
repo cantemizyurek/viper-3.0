@@ -4,6 +4,6 @@ randomIp = function ()
         ip = ip + floor(rnd() * 255)
         if i < 4 then ip = ip + "."
     end for
-    if not is_valid_ip(ip) then return randomIp()
+    if get_router(ip) == null then return randomIp()
     return ip
 end function
