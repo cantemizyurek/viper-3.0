@@ -1,5 +1,6 @@
-import_code("../facades/computer-objects/file.src")
-import_code("./functional.src")
+import_code("../../facades/computer-objects/file.src")
+import_code("../../libs/functional.src")
+import_code("../theme/theme-manager.src")
 
 COLORS = {
     "RED": "#c3201f",
@@ -36,98 +37,66 @@ viperCoolText = "
 <color=#343434>#</color> <color=#fff>Created by: <s>Volk</s> SkidMall</color>                      <color=#343434>#</color>
 <color=#343434>##################################################</color>"
 
-displayTable = function (keys, items)
-    longestItemPerKey = {}
-
-    for key in keys
-        longestItemPerKey[key] = key.len
-    end for
-
-    for item in items
-        for key in keys
-            if item[key].text.len > longestItemPerKey[key] then longestItemPerKey[key] = item[key].text.len
-        end for
-    end for
-
-    keysString = ""
-    for key in keys
-        keysString = keysString + "<color=" + COLORS["RED"] + ">" + addSpaceString(key.upper(), longestItemPerKey[key] - key.len + 2) + "</color>"
-    end for
-    print keysString
-
-    seperatorString = ""
-    for key in keys
-        string = ""
-        for i in range(0, key.len - 1)
-            string = string + "-"
-        end for
-        seperatorString = seperatorString + "<color=" + COLORS["GRAY"] + ">" + addSpaceString(string, longestItemPerKey[key] - string.len + 2) + "</color>"
-    end for
-    print seperatorString
-
-    for item in items
-        string = ""
-        for key in keys
-            string = string + "<color=" + item[key].color + ">" + addSpaceString(item[key].text, longestItemPerKey[key] - item[key].text.len + 2) + "</color>"
-        end for
-        print string
-    end for
-end function
-
 ViperUi = {}
+ViperUi.singleton = null
+ViperUi.mediator = null
 ViperUi.ls = function(children)
+    themeManager = self.mediator.getExtension("themeManager")
+
     keys = ["permissions", "owner", "name", "size"]
     handleGetItem = function(item)
         result = {}
         result.permissions = {
             "text": item.permissions,
-            "color": COLORS.YELLOW
+            "color": @themeManager.color(THEME_COLORS.WARNING)
         }
         result.owner = {
             "text": item.owner,
-            "color": COLORS.GREEN
+            "color": @themeManager.color(THEME_COLORS.SUCCESS)
         }
         result.name = {
             "text": item.name,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
-        if item.type == "FILE" then result.name.color = COLORS.GRAY
+        if item.type == "FILE" then result.name.color = @themeManager.color(THEME_COLORS.SECONDARY)
         result.size = {
             "text": item.size,
-            "color": COLORS.GRAY
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
         }
         return result
     end function
     items = map(children, @handleGetItem)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 
     print()
 end function
 ViperUi.targets = function (sessions)
+    themeManger = self.mediator.getExtension("themeManager")
+
     keys = ["id", "user", "public ip", "local ip", "handler"]
     i = 0
     handleGetItem = function(session)
         result = {}
         result.id = {
             "text": str(i),
-            "color": COLORS.YELLOW
+            "color": @themeManger.color(THEME_COLORS.WARNING)
         }
         result.user = {
             "text": session.handler.user,
-            "color": COLORS.GREEN
+            "color": @themeManger.color(THEME_COLORS.SUCCESS)
         }
         result["public ip"] = {
             "text": session.data.ip.public,
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.INFO)
         }
         result["local ip"] = {
             "text": session.data.ip.local,
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.INFO)
         }
         result.handler = {
             "text": session.handler.type,
-            "color": COLORS.GRAY
+            "color": @themeManger.color(THEME_COLORS.SECONDARY)
         }
 
         outer.i = outer.i + 1
@@ -135,11 +104,13 @@ ViperUi.targets = function (sessions)
     end function
     items = map(sessions, @handleGetItem)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 
     print()
 end function
 ViperUi.libs = function (libs)
+    themeManager = self.mediator.getExtension("themeManager")
+
     keys = ["id", "library", "version", "public ip", "local ip", "pivot", "current"]
     i = 0
     handleGetItem = function(lib)
@@ -150,86 +121,85 @@ ViperUi.libs = function (libs)
         result = {}
         result.id = {
             "text": str(i),
-            "color": COLORS.YELLOW
+            "color": @themeManager.color(THEME_COLORS.WARNING)
         }
         result.library = {
             "text": lib.type,
-            "color": COLORS.GREEN
+            "color": @themeManager.color(THEME_COLORS.SUCCESS)
         }
         result.version = {
             "text": lib.data.version,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result["public ip"] = {
             "text": lib.data.ip.public,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result["local ip"] = {
             "text": lib.data.ip.local,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result.pivot = {
-            "color": COLORS.GRAY
+            "text": "",
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
         }
         if pivot then
             result.pivot.text = "  *"
-            result.pivot.color = COLORS.GREEN
-        else
-            result.pivot.text = ""
-            result.pivot.color = COLORS.GRAY
+            result.pivot.color = @themeManager.color(THEME_COLORS.SUCCESS)
         end if
         result.current = {
-            "color": COLORS.GRAY
+            "text": "",
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
         }
         if current then
             result.current.text = "   *"
-            result.current.color = COLORS.GREEN
-        else
-            result.current.text = ""
-            result.current.color = COLORS.GRAY
+            result.current.color = @themeManager.color(THEME_COLORS.SUCCESS)
         end if
-
 
         outer.i = outer.i + 1
         return result
     end function
     items = map(libs, @handleGetItem)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 
     print()
 end function
 ViperUi.ps = function(processes)
+    themeManger = self.mediator.getExtension("themeManager")
+
     keys = ["user", "pid", "cpu", "mem", "name"]
     handleGetItem = function(process)
         result = {}
         result.user = {
             "text": process.USER,
-            "color": COLORS.GREEN
+            "color": @themeManger.color(THEME_COLORS.SUCCESS)
         }
         result.pid = {
             "text": str(process.PID),
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.WARNING)
         }
         result.cpu = {
             "text": str(process.CPU),
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.INFO)
         }
         result.mem = {
             "text": str(process.MEM),
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.INFO)
         }
         result.name = {
             "text": process.COMMAND,
-            "color": COLORS.GRAY
+            "color": @themeManger.color(THEME_COLORS.SECONDARY)
         }
         return result
     end function
 
     items = map(processes, @handleGetItem)
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 end function
 ViperUi.currentLibs = function (libs)
+    themeManager = self.mediator.getExtension("themeManager")
+
     keys = ["library", "version", "public ip", "local ip"]
     handleGetItem = function(lib)
         if lib == null then return null
@@ -237,19 +207,19 @@ ViperUi.currentLibs = function (libs)
         result = {}
         result.library = {
             "text": lib.type,
-            "color": COLORS.GREEN
+            "color": @themeManager.color(THEME_COLORS.SUCCESS)
         }
         result.version = {
             "text": lib.data.version,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result["public ip"] = {
             "text": lib.data.ip.public,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result["local ip"] = {
             "text": lib.data.ip.local,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         return result
     end function
@@ -258,86 +228,89 @@ ViperUi.currentLibs = function (libs)
     end function
     items = filter(map(libs, @handleGetItem), @filterNull)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
     print()
 end function
 ViperUi.nmap = function(devices, router)
+    themeManager = self.mediator.getExtension("themeManager")
     keys = ["host", "port", "forwarded", "state", "service", "version"]
 
     handleGetItem = function(device)
         result = {}
         result.host = {
             "text": device.local,
-            "color": COLORS.GREEN
+            "color": @themeManager.color(THEME_COLORS.SUCCESS)
         }
         result.port = {
             "text": str(device.port),
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         if device.forwarded then
             result.forwarded = {
                 "text": "TRUE",
-                "color": COLORS.GREEN
+                "color": @themeManager.color(THEME_COLORS.SUCCESS)
             }
         else
             result.forwarded = {
                 "text": "FALSE",
-                "color": COLORS.RED
+                "color": @themeManager.color(THEME_COLORS.ERROR)
             }
         end if
         if device.open then
             result.state = {
                 "text": "OPEN",
-                "color": COLORS.GREEN
+                "color": @themeManager.color(THEME_COLORS.SUCCESS)
             }
         else
             result.state = {
                 "text": "CLOSED",
-                "color": COLORS.RED
+                "color": @themeManager.color(THEME_COLORS.ERROR)
             }
         end if
         result.service = {
             "text": device.type,
-            "color": COLORS.GRAY
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
         }
         result.version = {
             "text": device.version,
-            "color": COLORS.GRAY
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
         }
         return result
     end function
     items = map(devices, @handleGetItem)
 
     print()
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "IP" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.ip.public + "</color>" + "</color>"
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "ESSID" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.name + "</color>" + "</color>"
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "BSSID" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + router.id + "</color>" + "</color>"
+    print themeManager.colorText(THEME_COLORS.HIGHLIGHT, "IP: " + themeManager.colorText(THEME_COLORS.SUCCESS, router.ip.public))
+    print themeManager.colorText(THEME_COLORS.HIGHLIGHT, "ESSID: " + themeManager.colorText(THEME_COLORS.SUCCESS, router.name))
+    print themeManager.colorText(THEME_COLORS.HIGHLIGHT, "BSSID: " + themeManager.colorText(THEME_COLORS.SUCCESS, router.id))
     print()
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 
     print()
 end function
 ViperUi.msfConsole = function (shells)
+    themeManager = self.mediator.getExtension("themeManager")
+
     keys = ["id", "public ip", "local ip", "user"]
     i = 0
     handleGetItem = function(shell)
         result = {}
         result.id = {
             "text": str(i),
-            "color": COLORS.YELLOW
+            "color": @themeManager.color(THEME_COLORS.WARNING)
         }
         result["public ip"] = {
             "text":  shell.handler.ip.public,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result["local ip"] = {
             "text": shell.handler.ip.local,
-            "color": COLORS.BLUE
+            "color": @themeManager.color(THEME_COLORS.INFO)
         }
         result.user = {
             "text": shell.handler.user,
-            "color": COLORS.GREEN
+            "color": @themeManager.color(THEME_COLORS.SUCCESS)
         }
 
         outer.i = outer.i + 1
@@ -345,19 +318,22 @@ ViperUi.msfConsole = function (shells)
     end function
     items = map(shells, @handleGetItem)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 end function
 ViperUi.msfConsoleInput = function ()
-    return "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "ID" + "</color>" + ": " + "</color>"
+    themeManger = self.mediator.getExtension("themeManager")
+    return themeManger.colorText(THEME_COLORS.HIGHLIGHT, "ID: ")
 end function
 ViperUi.helpSingle = function (command)
-    commandNameColor = COLORS.RED
-    if command.hasPermissions then commandNameColor = COLORS.GREEN
+    themeManger = self.mediator.getExtension("themeManager")
+
+    commandNameColor = @themeManger.color(THEME_COLORS.WARNING)
+    if command.hasPermissions then commandNameColor = @themeManger.color(THEME_COLORS.SUCCESS)
 
     parametersString = ""
     for parameter in command.parameters
-        if parameter.required then parametersString = parametersString + " [" 
-        if not parameter.required then parametersString = parametersString + " ("
+        if parameter.required then parametersString = parametersString + "[" 
+        if not parameter.required then parametersString = parametersString + "("
 
         if parameter.type == "options" then
             optionsString = ""
@@ -372,28 +348,30 @@ ViperUi.helpSingle = function (command)
             parametersString = parametersString + parameter.name
         end if
 
-        if parameter.required then parametersString = parametersString + "]"
-        if not parameter.required then parametersString = parametersString + ")"
+        if parameter.required then parametersString = parametersString + "] "
+        if not parameter.required then parametersString = parametersString + ") "
     end for
 
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Command" + "</color>" + ": " + "<color=" + commandNameColor + ">" + command.name + " " + parametersString + "</color>" + "</color>"
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Description" + "</color>" + ": " + "<color=" + COLORS.WHITE + ">" + command.description + "</color>" + "</color>"
+    print themeManger.colorText(THEME_COLORS.HIGHLIGHT, "Command: ") + commandNameColor(command.name + " " + parametersString)
+    print themeManger.colorText(THEME_COLORS.HIGHLIGHT, "Description: ") + themeManger.colorText(THEME_COLORS.TEXT, command.description)
     print()
 end function
 ViperUi.help = function (commands)
+    themeManger = self.mediator.getExtension("themeManager")
+
     keys = ["command", "arguments", "description" ]
 
     handleGetItem = function(command)
         result = {}
-        commandNameColor = COLORS.RED
-        if command.hasPermissions then commandNameColor = COLORS.GREEN
+        commandNameColor = @themeManger.color(THEME_COLORS.ERROR)
+        if command.hasPermissions then commandNameColor = @themeManger.color(THEME_COLORS.SUCCESS)
         result.command = {
             "text": command.name,
-            "color": commandNameColor
+            "color": @commandNameColor
         }
         parametersString = ""
         for parameter in command.parameters
-            if parameter.required then parametersString = parametersString + " ["
+            if parameter.required then parametersString = parametersString + "["
             if not parameter.required then parametersString = parametersString + " ("
 
             if parameter.type == "options" then
@@ -409,22 +387,22 @@ ViperUi.help = function (commands)
                 parametersString = parametersString + parameter.name
             end if
 
-            if parameter.required then parametersString = parametersString + "]"
-            if not parameter.required then parametersString = parametersString + ")"
+            if parameter.required then parametersString = parametersString + "] "
+            if not parameter.required then parametersString = parametersString + ") "
         end for
         result.arguments = {
             "text": parametersString,
-            "color": COLORS.BLUE
+            "color": @themeManger.color(THEME_COLORS.INFO)
         }
         result.description = {
             "text": command.description,
-            "color": COLORS.GRAY
+            "color": @themeManger.color(THEME_COLORS.TEXT)
         }
         return result
     end function
     items = map(commands, @handleGetItem)
 
-    displayTable(keys, items)
+    self.displayTable(keys, items)
 end function
 ViperUi.fileSystem = function(file, depth = 0)
     seperator = ""
@@ -433,29 +411,76 @@ ViperUi.fileSystem = function(file, depth = 0)
         seperator = seperator + "――"
     end for
     seperator = seperator + "»"
-    print seperator + ViperUi.fileSystemItem(file)
+    print seperator + self.fileSystemItem(file)
     if file.children isa Error then return
     for child in file.children
-        ViperUi.fileSystem(child, depth + 1)
+        self.fileSystem(child, depth + 1)
     end for
 end function
 ViperUi.fileSystemItem = function(file)
-    result = ""
-    result = result + "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.YELLOW + ">" + file.permissions + "</color>" + " " + "<color=" + COLORS.GREEN + ">" + file.owner + "</color>" + " " + "<color=" + COLORS.BLUE + ">" + file.group + "</color>" + " " + "<color=" + COLORS.GRAY + ">" + file.name + "</color>" + " " + "<color=" + COLORS.GRAY + ">" + file.size + "</color>"
+    themeManager = self.mediator.getExtension("themeManager")
+    result = themeManager.colorText(THEME_COLORS.WARNING, file.permissions) + " " + themeManager.colorText(THEME_COLORS.SUCCESS, file.owner) + " " + themeManager.colorText(THEME_COLORS.INFO, file.group) + " " + themeManager.colorText(THEME_COLORS.SECONDARY, file.name) + " " + themeManager.colorText(THEME_COLORS.SECONDARY, file.size)
     return result
 end function
 ViperUi.displaySession = function(session)
+    themeManger = self.mediator.getExtension("themeManager")
     handler = session.handler
     ip = session.data.ip
     name = "file"
     if handler.type != "file" then name = handler.name
-    // result = handler.user + "@" + name + "-[" + ip.public + ":" + ip.local + "] (" + handler.path + ") -> "
     result = "<color=" + COLORS.GRAY + "><pos=4.95>———(" + handler.user + "@" + "<color=" + COLORS.RED + ">" + name + "</color>" + ")——[" + "<color=" + COLORS.RED + ">" + ip.public + "</color>" + "]——[" + ip.local + "]——[" + "<color=" + COLORS.RED + ">" + handler.path + "</color>" + "]——[" + "<color=" + COLORS.GREEN + ">" + handler.type + "</color>" + "]<voffset=-0.35em><pos=0><rotate=90>—<pos=0><voffset=-0.7em>—<pos=0><voffset=-1.05em>—<rotate=0><pos=4.95><voffset=-1.4em>——<#c3201f>$</color></color> "
-    return result  
+    return result
 end function
 ViperUi.init = function ()
     print(viperCoolText)
     print()
     print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.1.4" + "</color>" + "</color>"
     print()
+end function
+ViperUi.displayTable = function (keys, items)
+    themeManger = self.mediator.getExtension("themeManager")
+    longestItemPerKey = {}
+
+    for key in keys
+        longestItemPerKey[key] = key.len
+    end for
+
+    for item in items
+        for key in keys
+            if item[key].text.len > longestItemPerKey[key] then longestItemPerKey[key] = item[key].text.len
+        end for
+    end for
+
+    keysString = ""
+    for key in keys
+        keysString = keysString + themeManger.colorText(THEME_COLORS.HIGHLIGHT, addSpaceString(key.upper(), longestItemPerKey[key] - key.len + 2))
+    end for
+    print keysString
+
+    seperatorString = ""
+    for key in keys
+        string = ""
+        for i in range(0, key.len - 1)
+            string = string + "-"
+        end for
+        seperatorString = seperatorString + themeManger.colorText(THEME_COLORS.SECONDARY, addSpaceString(string, longestItemPerKey[key] - string.len + 2))
+    end for
+print seperatorString
+
+for item in items
+    string = ""
+    for key in keys
+        keyRes = addSpaceString(item[key].text, longestItemPerKey[key] - item[key].text.len + 2)
+        string = string + item[key].color(keyRes)
+    end for
+    print string
+end for
+end function
+ViperUi.setMediator = function (mediator)
+    self.mediator = mediator
+end function
+ViperUi.New = function()
+    if ViperUi.singleton != null then return ViperUi.singleton
+    ViperUi.singleton = new ViperUi
+    return ViperUi.singleton
 end function

@@ -4,6 +4,7 @@ import_code("./managers/command/command.src")
 import_code("./managers/session/session.src")
 
 lsCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -13,7 +14,7 @@ lsCommandHandler = function(params)
     if file isa Error then return file
     if file.children isa Error then return file.children
 
-    ViperUi.ls(file.children)
+    viperUi.ls(file.children)
 end function
 commandManager.registerCommand(Command.New({
     "name": "ls",
@@ -29,6 +30,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 fsCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -36,7 +38,7 @@ fsCommandHandler = function(params)
 
     file = handler.getFile(path)
     if file isa Error then return file
-    ViperUi.fileSystem(file)
+    viperUi.fileSystem(file)
 end function
 commandManager.registerCommand(Command.New({
     "name": "fs",
@@ -396,6 +398,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 nmapCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     ip = params.ip
 
     if ip == "random" then ip = randomIp()
@@ -415,7 +418,7 @@ nmapCommandHandler = function(params)
 
     allPorts.sort("port")
 
-    ViperUi.nmap(allPorts, router)
+    viperUi.nmap(allPorts, router)
 end function
 commandManager.registerCommand(Command.New({
     "name": "nmap",
@@ -583,10 +586,11 @@ commandManager.registerCommand(Command.New({
 }))
 
 targetsCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     sessions = sessionManager.sessions
 
-    ViperUi.targets(sessions)
+    viperUi.targets(sessions)
 end function
 commandManager.registerCommand(Command.New({
     "name": "targets",
@@ -648,6 +652,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 libsCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     libraryManager = extensionMediator.getExtension("libManager")
     libraries = libraryManager.libs
     currentLibs = libraryManager.currentLibs
@@ -667,7 +672,7 @@ libsCommandHandler = function(params)
             "pivot": libsHasLib(pivotLibs, lib)
         }
     end function
-    ViperUi.libs(map(libraries, @handleMapLibs))
+    viperUi.libs(map(libraries, @handleMapLibs))
 end function
 commandManager.registerCommand(Command.New({
     "name": "libs",
@@ -925,16 +930,17 @@ commandManager.registerCommand(Command.New({
 }))
 
 clearCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     libManager = extensionMediator.getExtension("libManager")
 
     clear_screen()
-    ViperUi.init() 
+    viperUi.init() 
     currentLibs = libManager.currentLibs
     listCurrentLibs = []
     for lib in currentLibs
         listCurrentLibs.push(lib.value)
     end for
-    ViperUi.currentLibs(listCurrentLibs)
+    viperUi.currentLibs(listCurrentLibs)
 end function
 commandManager.registerCommand(Command.New({
     "name": "clear",
@@ -1054,13 +1060,14 @@ commandManager.registerCommand(Command.New({
 }))
 
 psCommandHabdler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
 
     processes = currentHandler.processes()
 
-    ViperUi.ps(processes)
+    viperUi.ps(processes)
 end function
 commandManager.registerCommand(Command.New({
     "name": "ps",
@@ -1269,6 +1276,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 msfconsoleCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     metaxploitManager = extensionMediator.getExtension("metaxploitManager")
     shells = metaxploitManager.rShellList()
     if shells isa Error then return shells
@@ -1276,8 +1284,8 @@ msfconsoleCommandHandler = function(params)
     handleShellsToSession = function (shell)
         return Session.New(shell, {})
     end function
-    ViperUi.msfConsole(map(shells, @handleShellsToSession))
-    input = user_input(ViperUi.msfConsoleInput)
+    viperUi.msfConsole(map(shells, @handleShellsToSession))
+    input = user_input(viperUi.msfConsoleInput)
     inputNumber = to_int(input)
     if inputNumber >= shells.len() or typeof(inputNumber) == "string" or inputNumber < 0 then return Error.New("Invalid input") 
     session = Session.New(shells[inputNumber], {})
@@ -1293,6 +1301,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 helpCommandHandler = function(params)
+    viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")
     commandName = params.commandName
 
@@ -1307,7 +1316,7 @@ helpCommandHandler = function(params)
             "parameters": command.parameters,
             "hasPermissions": hasPermission
         }
-        ViperUi.helpSingle(result)
+        viperUi.helpSingle(result)
         return
     end if
 
@@ -1324,7 +1333,7 @@ helpCommandHandler = function(params)
         }
         commandsList.push(result)
     end for
-    ViperUi.help(commandsList)
+    viperUi.help(commandsList)
 end function
 commandManager.registerCommand(Command.New({
     "name": "help",

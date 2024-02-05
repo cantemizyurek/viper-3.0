@@ -6,7 +6,7 @@ MacroManager.init = function ()
     return self.runMacro("init")
 end function
 MacroManager.runMacro = function (name)
-    commandManager = extensionMediator.getExtension("commandManager")
+    commandManager = self.mediator.getExtension("commandManager")
     macro = self.getMacro(name)
     if macro isa Error then return Error.New("Could not find macro " + name)
 
@@ -23,7 +23,7 @@ MacroManager.getMacro = function (name)
     return macro.content
 end function
 MacroManager.getMacroFolder = function ()
-    sessionManager = extensionMediator.getExtension("sessionManager")
+    sessionManager = self.mediator.getExtension("sessionManager")
     pivotSession = sessionManager.pivotSession
     handler = pivotSession.handler
 

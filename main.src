@@ -1,3 +1,4 @@
+import_code("./libs/json.src")
 import_code("./managers/command/command-manager.src")
 import_code("./managers/command/command.src")
 import_code("./mediator.src")
@@ -6,11 +7,13 @@ import_code("./managers/session/session.src")
 import_code("./managers/lib/lib-manager.src")
 import_code("./managers/lib/metaxploit-manager.src")
 import_code("./libs/error.src")
-import_code("./libs/viper-ui.src")
+import_code("./managers/ui/viper-ui.src")
 import_code("./libs/functional.src")
 import_code("./facades/network/router.src")
 import_code("./managers/macro/macro-manager.src")
+import_code("./managers/theme/theme-manager.src")
 import_code("./managers/dictionary/dictionary-manager.src")
+import_code("./managers/config/config-manager.src")
 
 extensionMediator = ExtensionMediator.New()
 
@@ -26,10 +29,17 @@ macroManager = MacroManager.New()
 extensionMediator.addExtension("macroManager", macroManager)
 dictionaryManager = DictionaryManager.New()
 extensionMediator.addExtension("dictionaryManager", dictionaryManager)
+themeManager = ThemeManager.New()
+extensionMediator.addExtension("themeManager", themeManager)
+viperUi = ViperUi.New()
+extensionMediator.addExtension("viperUi", viperUi)
+configManager = ConfigManager.New()
+extensionMediator.addExtension("configManager", configManager)
 
 import_code("./commands.src")
 
 init = function()
+    viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     libManager = extensionMediator.getExtension("libManager")
     sessionManager.addSession(get_shell())
@@ -60,20 +70,31 @@ init = function()
     end if
 
     clear_screen()
-    ViperUi.init()
+    viperUi.init()
 
     currentLibs = libManager.currentLibs
     listCurrentLibs = []
     for lib in currentLibs
         listCurrentLibs.push(lib.value)
     end for
-    ViperUi.currentLibs(listCurrentLibs)
+    viperUi.currentLibs(listCurrentLibs)
 
     macroManager = extensionMediator.getExtension("macroManager")
     macros = macroManager.init()
+
+    configManager = extensionMediator.getExtension("configManager")
+    configManager.init()
+
+    themeManager = extensionMediator.getExtension("themeManager")
+    if not configManager.config.hasIndex("theme") then
+        configManager.saveConfig({"theme": themeManager.colors})
+    end if
+    themeManager.init(configManager.config.theme)
+    configManager.saveConfig({"theme": themeManager.colors})
 end function
 
 main = function()
+    viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")
     commandManager.run()
 
@@ -82,7 +103,7 @@ main = function()
 
     sessionManager = extensionMediator.getExtension("sessionManager")
 
-    userInput = user_input(ViperUi.displaySession(sessionManager.currentSession))
+    userInput = user_input(viperUi.displaySession(sessionManager.currentSession))
 
     result = commandManager.executeCommand(userInput)
 end function
