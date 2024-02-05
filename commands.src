@@ -1300,6 +1300,61 @@ commandManager.registerCommand(Command.New({
     "callback": @msfconsoleCommandHandler
 }))
 
+adduserCommandHandler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    user = params.user
+    password = params.password
+
+    res = handler.addUser(user, password)
+    if res isa Error then return res
+end function
+commandManager.registerCommand(Command.New({
+    "name": "adduser",
+    "description": "Adds a user to the computer.",
+    "parameters": [
+        Parameter.New({
+            "name": "user",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "password",
+            "required": true
+        })
+    ],
+    "callback": @adduserCommandHandler,
+    "permissions": {
+        "object": "computer",
+        "privilege": "root"
+    }
+}))
+
+deluserCommandHandler = function(params)
+    sessionManager = extensionMediator.getExtension("sessionManager")
+    session = sessionManager.currentSession
+    handler = session.handler
+    user = params.user
+
+    res = handler.deleteUser(user)
+    if res isa Error then return res
+end function
+commandManager.registerCommand(Command.New({
+    "name": "deluser",
+    "description": "Deletes a user from the computer.",
+    "parameters": [
+        Parameter.New({
+            "name": "user",
+            "required": true
+        }),
+    ],
+    "callback": @deluserCommandHandler,
+    "permissions": {
+        "object": "computer",
+        "privilege": "root"
+    }
+}))
+
 helpCommandHandler = function(params)
     viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")
