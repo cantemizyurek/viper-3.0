@@ -86,11 +86,7 @@ init = function()
     configManager.init()
 
     themeManager = extensionMediator.getExtension("themeManager")
-    if not configManager.config.hasIndex("theme") then
-        configManager.saveConfig({"theme": themeManager.colors})
-    end if
-    themeManager.init(configManager.config.theme)
-    configManager.saveConfig({"theme": themeManager.colors})
+    themeManager.init()
 end function
 
 main = function()

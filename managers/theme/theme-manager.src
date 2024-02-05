@@ -17,6 +17,7 @@ THEME_COLORS = {
 }
 
 ThemeManager = {}
+ThemeManager.mediator = null
 ThemeManager.colors = {
     "highlight": "#c3201f",
     "text": "#fff",
@@ -37,8 +38,13 @@ end function
 ThemeManager.setMediator = function (mediator)
     self.mediator = mediator
 end function
-ThemeManager.init = function(colors)
-    self.colors = self.colors + colors
+ThemeManager.init = function()
+    configManager = self.mediator.getExtension("configManager")
+    if not configManager.config.hasIndex("theme") then
+        configManager.saveConfig({"theme": self.colors})
+    end if
+    self.colors = self.colors + configManager.config.theme
+    configManager.saveConfig({"theme": themeManager.colors})
 end function
 ThemeManager.New = function()
     result = new ThemeManager
