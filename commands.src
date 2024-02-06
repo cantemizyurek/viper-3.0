@@ -1086,16 +1086,28 @@ killCommandHandler = function(params)
 
     pid = params.pid
 
-    result = currentHandler.closeProcess(pid)
-    if result isa Error then return result
+    if pid == "all" then
+        processes = currentHandler.processes()
+        handleKillProcess = function(process)
+            currentHandler.closeProcess(process.PID)
+        end function
+        forEach(processes, @handleKillProcess)
+    else
+        result = currentHandler.closeProcess(pid)
+        if result isa Error then return result
+    end if
 end function
 commandManager.registerCommand(Command.New({
     "name": "kill",
     "description": "Kill a process",
     "parameters": [
-        Parameter.New({
+        OptionsParameter.New({
             "name": "pid",
-            "required": true
+            "required": true,
+            "options": {
+                "pid": null,
+                "all": "all"
+            }
         })
     ],
     "callback": @killCommandHandler,
