@@ -3,7 +3,7 @@ import_code("./utils/random-ip.src")
 import_code("./managers/command/command.src")
 import_code("./managers/session/session.src")
 
-lsCommandHandler = function(params)
+lsCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
@@ -29,7 +29,7 @@ commandManager.registerCommand(Command.New({
     "callback": @lsCommandHandler
 }))
 
-fsCommandHandler = function(params)
+fsCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
@@ -53,7 +53,7 @@ commandManager.registerCommand(Command.New({
     "callback": @fsCommandHandler
 }))
 
-cdCommandHandler = function(params)
+cdCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -73,7 +73,7 @@ commandManager.registerCommand(Command.New({
     "callback": @cdCommandHandler
 }))
 
-chmodCommandHandler = function (params)
+chmodCommandHandler = function (params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -105,7 +105,7 @@ commandManager.registerCommand(Command.New({
     "callback": @chmodCommandHandler
 }))
 
-chownCommandHandler = function (params)
+chownCommandHandler = function (params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -137,7 +137,7 @@ commandManager.registerCommand(Command.New({
     "callback": @chownCommandHandler
 }))
 
-chgrpCommandHandler = function (params)
+chgrpCommandHandler = function (params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -169,7 +169,7 @@ commandManager.registerCommand(Command.New({
     "callback": @chgrpCommandHandler
 }))
 
-mvCommandHandler = function(params)
+mvCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -194,7 +194,7 @@ commandManager.registerCommand(Command.New({
     "callback": @mvCommandHandler
 }))
 
-writeCommandHandler = function(params)
+writeCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -237,7 +237,7 @@ commandManager.registerCommand(Command.New({
 }))
 
 
-corruptLogsCommandHandler = function(params)
+corruptLogsCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -262,7 +262,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-cpCommandHandler = function(params)
+cpCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -287,7 +287,7 @@ commandManager.registerCommand(Command.New({
     "callback": @cpCommandHandler
 }))
 
-catCommandHandler = function(params)
+catCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -310,7 +310,7 @@ commandManager.registerCommand(Command.New({
     "callback": @catCommandHandler
 }))
 
-touchCommandHandler = function(params)
+touchCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -333,7 +333,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-mkdirCommandHandler = function(params)
+mkdirCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -356,7 +356,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-rmCommandHandler = function(params)
+rmCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -376,7 +376,7 @@ commandManager.registerCommand(Command.New({
     "callback": @rmCommandHandler
 }))
 
-crackCommandHandler = function(params)
+crackCommandHandler = function(params, extensionMediator)
     libMannager = extensionMediator.getExtension("libManager")
     lib = libMannager.getCurrentLib("crypto")
     if lib == null then return Error.New("No crypto library loaded")
@@ -397,7 +397,7 @@ commandManager.registerCommand(Command.New({
     "callback": @crackCommandHandler
 }))
 
-nmapCommandHandler = function(params)
+nmapCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     ip = params.ip
 
@@ -437,7 +437,7 @@ commandManager.registerCommand(Command.New({
     "callback": @nmapCommandHandler
 }))
 
-sshCommandHandler = function(params)
+sshCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -492,7 +492,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-passwdCommandHandler = function(params)
+passwdCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -522,7 +522,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-exploitScanCommandHandler = function(params)
+exploitScanCommandHandler = function(params, extensionMediator)
     address = params.address
     port = params.port
     options = params.options
@@ -585,7 +585,7 @@ commandManager.registerCommand(Command.New({
     "callback": @exploitScanCommandHandler
 }))
 
-targetsCommandHandler = function(params)
+targetsCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     sessions = sessionManager.sessions
@@ -599,7 +599,7 @@ commandManager.registerCommand(Command.New({
     "callback": @targetsCommandHandler
 }))
 
-delTargetCommandHandler = function(params)
+delTargetCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     sessions = sessionManager.sessions
     sessionIndex = params.sessionIndex
@@ -630,7 +630,7 @@ commandManager.registerCommand(Command.New({
     "callback": @delTargetCommandHandler
 }))
 
-useCommandHandler = function(params)
+useCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     sessions = sessionManager.sessions
     sessionIndex = params.sessionIndex
@@ -651,7 +651,7 @@ commandManager.registerCommand(Command.New({
     "callback": @useCommandHandler
 }))
 
-libsCommandHandler = function(params)
+libsCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     libraryManager = extensionMediator.getExtension("libManager")
     libraries = libraryManager.libs
@@ -681,7 +681,7 @@ commandManager.registerCommand(Command.New({
     "callback": @libsCommandHandler
 }))
 
-useLibCommandHandler = function(params)
+useLibCommandHandler = function(params, extensionMediator)
     libraryManager = extensionMediator.getExtension("libManager")
     libraries = libraryManager.libs
     libraryIndex = params.libraryIndex
@@ -705,7 +705,7 @@ commandManager.registerCommand(Command.New({
     "callback": @useLibCommandHandler
 }))
 
-usePivotLibCommandHandler = function(params)
+usePivotLibCommandHandler = function(params, extensionMediator)
     libraryManager = extensionMediator.getExtension("libManager")
     libraries = libraryManager.libs
     libraryIndex = params.libraryIndex
@@ -729,7 +729,7 @@ commandManager.registerCommand(Command.New({
     "callback": @usePivotLibCommandHandler
 }))
 
-addLibCommandHandler = function(params)
+addLibCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     libManager = extensionMediator.getExtension("libManager")
 
@@ -779,7 +779,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-jumpFileCommandHandler = function(params)
+jumpFileCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -819,7 +819,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-executeCommandHandler = function(params)
+executeCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -848,7 +848,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-sudoCommandHandler = function(params)
+sudoCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -929,7 +929,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-clearCommandHandler = function(params)
+clearCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     libManager = extensionMediator.getExtension("libManager")
 
@@ -949,7 +949,7 @@ commandManager.registerCommand(Command.New({
     "callback": @clearCommandHandler
 }))
 
-termCommandHandler = function(params)
+termCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -966,7 +966,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-getCommandHandler = function(params)
+getCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     pivotSession = sessionManager.pivotSession
     pivotHandler = pivotSession.handler
@@ -999,7 +999,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-putCommandHandler = function(params)
+putCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     pivotSession = sessionManager.pivotSession
     pivotHandler = pivotSession.handler
@@ -1032,7 +1032,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-nukeCommandHandler = function(params)
+nukeCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
@@ -1059,7 +1059,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-psCommandHabdler = function(params)
+psCommandHabdler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     sessionManager = extensionMediator.getExtension("sessionManager")
     currentSession = sessionManager.currentSession
@@ -1079,7 +1079,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-killCommandHandler = function(params)
+killCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     currentSession = sessionManager.currentSession
     currentHandler = currentSession.handler
@@ -1116,7 +1116,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-echoCommandHandler = function(params)
+echoCommandHandler = function(params, extensionMediator)
     text = params.text
     return text
 end function
@@ -1133,7 +1133,7 @@ commandManager.registerCommand(Command.New({
     "callback": @echoCommandHandler
 }))
 
-returnCommandHandler = function(params)
+returnCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     sessionManager.setCurrentSession(sessionManager.getSessionIndex(sessionManager.pivotSession))
 end function
@@ -1144,7 +1144,7 @@ commandManager.registerCommand(Command.New({
     "callback": @returnCommandHandler
 }))
 
-backCommandHandler = function(params)
+backCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     count = params.count
     if count == null then return Error.New("Invalid count")
@@ -1166,7 +1166,7 @@ commandManager.registerCommand(Command.New({
     "callback": @backCommandHandler
 }))
 
-exitCommandHandler = function(params)
+exitCommandHandler = function(params, extensionMediator)
     exit()
 end function
 commandManager.registerCommand(Command.New({
@@ -1176,7 +1176,7 @@ commandManager.registerCommand(Command.New({
     "callback": @exitCommandHandler
 }))
 
-addAliasCommandHandler = function(params)
+addAliasCommandHandler = function(params, extensionMediator)
     commandManager = extensionMediator.getExtension("commandManager")
     alias = params.alias
     command = params.command
@@ -1199,7 +1199,7 @@ commandManager.registerCommand(Command.New({
     "callback": @addAliasCommandHandler
 }))
 
-nsLookupCommandHandler = function(params)
+nsLookupCommandHandler = function(params, extensionMediator)
     address = params.address
     result = nslookup(address)
     if result == "Not Found" then return Error.New("Not Found")
@@ -1217,7 +1217,7 @@ commandManager.registerCommand(Command.New({
     "callback": @nsLookupCommandHandler
 }))
 
-secureCommandHandler = function(params)
+secureCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -1262,7 +1262,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-msfvenomCommandHandler = function(params)
+msfvenomCommandHandler = function(params, extensionMediator)
     ip = params.ip
     port = params.port
     
@@ -1287,7 +1287,7 @@ commandManager.registerCommand(Command.New({
     "callback": @msfvenomCommandHandler
 }))
 
-msfconsoleCommandHandler = function(params)
+msfconsoleCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     metaxploitManager = extensionMediator.getExtension("metaxploitManager")
     shells = metaxploitManager.rShellList()
@@ -1312,7 +1312,7 @@ commandManager.registerCommand(Command.New({
     "callback": @msfconsoleCommandHandler
 }))
 
-adduserCommandHandler = function(params)
+adduserCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -1342,7 +1342,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-deluserCommandHandler = function(params)
+deluserCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession
     handler = session.handler
@@ -1367,7 +1367,7 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
-helpCommandHandler = function(params)
+helpCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")
     commandName = params.commandName

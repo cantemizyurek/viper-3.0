@@ -46,7 +46,7 @@ CommandManager.tick = function()
     if command isa Error then return command
     hasPermissions = self.checkPermissions(command[0])
     if hasPermissions isa Error then return hasPermissions
-    return command[0].execute(command[1])
+    return command[0].execute(command[1], self.mediator)
 end function
 CommandManager.checkPermissions = function(command)
     sessionManager = self.mediator.getExtension("sessionManager")

@@ -124,10 +124,10 @@ Command.permissions = {
     "object": "file",
     "privilege": "guest"
 }
-Command.execute = function(args)
+Command.execute = function(args, mediator)
     parameters = self.parseArgsToParameters(args.split(" "))
     if parameters isa Error then return parameters
-    return self.callback(parameters)
+    return self.callback(parameters, mediator)
 end function
 Command.help = function()
     help = self.name + " "
