@@ -38,6 +38,7 @@ MetaxploitManager.hack = function (address, port, options)
     lib = currentMetaxploit.getLib(address, port)
     if lib isa Error then return lib
     if is_valid_ip(port) then options = port
+    if options == null then return pivotMetaxploit.hack(lib, port)
     return pivotMetaxploit.hack(lib, options)
 end function
 MetaxploitManager.setMediator = function (mediator)
