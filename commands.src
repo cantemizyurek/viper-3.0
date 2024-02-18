@@ -1227,7 +1227,18 @@ secureCommandHandler = function(params, extensionMediator)
     if type == "home" then
         files = handler.getFile("/").children
         handleSecureFile = function(file)
+            if file.name == "Terminal.exe" then return
             if file.name == "home" then return
+            if file.name == "usr"  then
+                if not file.hasChild("bin") then return
+                forEach(file.child("bin").children, @handleSecureFile)
+                return
+            end if
+            if file.name == "sudo" then return
+            if file.name == "bin" then 
+                forEach(file.children, @handleSecureFile)
+                return
+            end if
             file.setPermissions("o-rwx", true)
             file.setPermissions("g-rwx", true)
             file.setPermissions("u-rwx", true)
