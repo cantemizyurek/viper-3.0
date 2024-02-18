@@ -1379,6 +1379,54 @@ commandManager.registerCommand(Command.New({
     }
 }))
 
+findlibCommandHandler = function(params, extensionMediator)
+    type = params.type
+    version = params.version
+
+    validTypes = ["kernel_router", "ssh", "ftp", "http", "rshell", "smtp", "employees", "cam", "repository"]
+
+    if not validTypes.indexOf(type) then return Error.New("Invalid type")
+
+    found = false
+    while found == false
+        router = Router.New(randomIp())
+        if router isa Error then continue
+        print "Scanning for " + type + " " + version + " on " + router.ip.public
+
+        devices = router.devices()
+        handleFindLib = function(device)
+            if device == null then return
+            for port in device
+                if port.type == type and port.version == version then
+                    outer.found = outer.router.ip.public
+                    return
+                end if
+            end for
+        end function
+        for device in devices
+            if device == null then return
+            handleFindLib(device.value)
+        end for
+    end while
+
+    print "Found " + type + " " + version + " on " + found
+end function
+commandManager.registerCommand(Command.New({
+    "name": "findlib",
+    "description": "Finds a library",
+    "parameters": [
+        Parameter.New({
+            "name": "type",
+            "required": true
+        }),
+        Parameter.New({
+            "name": "version",
+            "required": true
+        })
+    ],
+    "callback": @findlibCommandHandler
+}))
+
 helpCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")
