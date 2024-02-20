@@ -1385,7 +1385,7 @@ findlibCommandHandler = function(params, extensionMediator)
 
     validTypes = ["kernel_router", "ssh", "ftp", "http", "rshell", "smtp", "employees", "cam", "repository"]
 
-    if not validTypes.indexOf(type) then return Error.New("Invalid type")
+    if not validTypes.indexOf(type) == null then return Error.New("Invalid type")
 
     found = false
     while found == false
