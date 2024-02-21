@@ -1427,6 +1427,39 @@ commandManager.registerCommand(Command.New({
     "callback": @findlibCommandHandler
 }))
 
+historyCommandHandler = function(params, extensionMediator)
+    viperUi = extensionMediator.getExtension("viperUi")
+    commandManager = extensionMediator.getExtension("commandManager")
+    id = params.id
+
+    if id != null then
+        id = id + 1
+        if commandManager.len < 0 or id >= commandManager.history.len then return Error.New("Invalid id")
+        command = commandManager.history[id]
+        print "will execute: " + command[0].name + " " + command[1] + " " + params.newParams
+        commandManager.executeCommand(command[0].name + " " + command[1] + " " + params.newParams)
+    else
+        viperUi.history(commandManager.history)
+    end if
+end function
+commandManager.registerCommand(Command.New({
+    "name": "history",
+    "description": "Show command history",
+    "parameters": [
+        Parameter.New({
+            "name": "id",
+            "required": false,
+            "type": PARAMETER_TYPES.NUMBER
+        }),
+        RestParameter.New({
+            "name": "newParams",
+            "required": false,
+            "default": ""
+        })
+    ],
+    "callback": @historyCommandHandler
+}))
+
 helpCommandHandler = function(params, extensionMediator)
     viperUi = extensionMediator.getExtension("viperUi")
     commandManager = extensionMediator.getExtension("commandManager")

@@ -476,6 +476,33 @@ for item in items
     print string
 end for
 end function
+ViperUi.history = function(commands)
+    themeManager = self.mediator.getExtension("themeManager")
+    keys = ["id", "command", "args"]
+
+    i = 0
+    handleGetItem = function(command)
+        result = {}
+        result.id = {
+            "text": str(i),
+            "color": @themeManager.color(THEME_COLORS.WARNING)
+        }
+        result.command = {
+            "text": command[0].name,
+            "color": @themeManager.color(THEME_COLORS.INFO)
+        }
+        result.args = {
+            "text": command[1],
+            "color": @themeManager.color(THEME_COLORS.SECONDARY)
+        }
+        outer.i = outer.i + 1
+        return result
+    end function
+    items = map(commands, @handleGetItem)
+    items.reverse()
+
+    self.displayTable(keys, items)
+end function
 ViperUi.setMediator = function (mediator)
     self.mediator = mediator
 end function
