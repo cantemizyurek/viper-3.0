@@ -372,7 +372,7 @@ ViperUi.help = function (commands)
         parametersString = ""
         for parameter in command.parameters
             if parameter.required then parametersString = parametersString + "["
-            if not parameter.required then parametersString = parametersString + " ("
+            if not parameter.required then parametersString = parametersString + "("
 
             if parameter.type == "options" then
                 optionsString = ""
