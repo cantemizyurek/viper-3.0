@@ -434,7 +434,7 @@ end function
 ViperUi.init = function ()
     print(viperCoolText)
     print()
-    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.1.6" + "</color>" + "</color>"
+    print "<color=" + COLORS.GRAY + ">" + "<color=" + COLORS.RED + ">" + "Version" + "</color>" + ": " + "<color=" + COLORS.GREEN + ">" + "3.1.7" + "</color>" + "</color>"
     print()
 end function
 ViperUi.displayTable = function (keys, items)
