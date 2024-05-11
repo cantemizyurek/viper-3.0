@@ -437,6 +437,33 @@ commandManager.registerCommand(Command.New({
     "callback": @nmapCommandHandler
 }))
 
+whoisCommandHandler = function(params, extensionMediator)
+    viperUi = extensionMediator.getExtension("viperUi")
+    ip = params.ip
+
+    adminInfo = whois(ip)
+    infoLines = adminInfo.split(char(10))
+
+    infoObject = {}
+    infoObject.domainName = infoLines[0].split(":")[1].trim
+    infoObject.adminContact = infoLines[1].split(":")[1].trim
+    infoObject.email = infoLines[2].split(":")[1].trim
+    infoObject.phone = infoLines[3].split(":")[1].trim
+
+    viperUi.whois(infoObject)
+end function
+commandManager.registerCommand(Command.New({
+    "name": "whois",
+    "description": "Get information about an IP",
+    "parameters": [
+        Parameter.New({
+            "name": "ip",
+            "required": true
+        })
+    ],
+    "callback": @whoisCommandHandler
+}))
+
 sshCommandHandler = function(params, extensionMediator)
     sessionManager = extensionMediator.getExtension("sessionManager")
     session = sessionManager.currentSession

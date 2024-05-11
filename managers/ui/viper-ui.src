@@ -503,6 +503,14 @@ ViperUi.history = function(commands)
 
     self.displayTable(keys, items)
 end function
+ViperUi.whois = function(whoisObject)
+    themeManager = self.mediator.getExtension("themeManager")
+    
+    print(themeManager.colorText(THEME_COLORS.HIGHLIGHT, "DOMAIN NAME: ") + themeManager.colorText(THEME_COLORS.SUCCESS, whoisObject.domainName))
+    print(themeManager.colorText(THEME_COLORS.HIGHLIGHT, "Administrative contact: ") + themeManager.colorText(THEME_COLORS.SUCCESS, whoisObject.adminContact))
+    print(themeManager.colorText(THEME_COLORS.HIGHLIGHT, "EMAIL: ") + themeManager.colorText(THEME_COLORS.SUCCESS, whoisObject.email))
+    print(themeManager.colorText(THEME_COLORS.HIGHLIGHT, "PHONE: ") + themeManager.colorText(THEME_COLORS.SUCCESS, whoisObject.phone))
+end function
 ViperUi.setMediator = function (mediator)
     self.mediator = mediator
 end function
