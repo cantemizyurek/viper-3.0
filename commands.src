@@ -1533,3 +1533,46 @@ commandManager.registerCommand(Command.New({
     ],
     "callback": @helpCommandHandler
 }))
+
+getPassCommandHandler = function(params, extensionMediator)
+	viperUi = extensionMediator.getExtension("viperUi")
+	sessionManager = extensionMediator.getExtension("sessionManager")
+	session = sessionManager.currentSession
+	handler = session.handler
+	path = "/etc/passwd"
+	file = handler.getFile(path)
+	if (not file isa Error) and (file.hasPermission("r")) then
+		print(file.content)
+	end if
+	
+	path = "/home"
+	file = handler.getFile(path)
+	if file isa Error then
+		return file
+	end if
+	if file.children isa Error then
+		return file.children
+	end if
+
+	userList = []	
+	for child in file.children
+		if child.name != "guest" then userList.push(child.name)
+	end for
+	
+	for user in userList
+		path = "/home/" + user + "/Config/Mail.txt"
+		file = handler.getFile(path)
+		if (not file isa Error) and (file.hasPermission("r")) then
+			print(file.content)
+		end if
+	
+		path = "/home/" + user + "/Config/Bank.txt"
+		file = handler.getFile(path)
+		if (not file isa Error) and (file.hasPermission("r")) then
+			print(file.content)
+		end if
+	end for
+	
+	//viperUi.ls(file.children)
+end function
+commandManager.registerCommand(Command.New({"name":"getpass", "description":"List all passwords accessible", "callback":@getPassCommandHandler}))
