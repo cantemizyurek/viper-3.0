@@ -1539,10 +1539,46 @@ getPassCommandHandler = function(params, extensionMediator)
 	sessionManager = extensionMediator.getExtension("sessionManager")
 	session = sessionManager.currentSession
 	handler = session.handler
+	
+	allHash = []
+	objEntry = { "user" : "", "hash" : "", "password" : "" }
+	fileContent = []
+	dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+	
+	GetEntry = function(line)
+		thisUser = slice(line, 0, line.indexOf(":"))
+		thisHash = slice(line, line.indexOf(":") + 1, line.len)
+		thisPassword = "" 
+		
+		password = dictionaryManager.get()
+		while not password isa Error
+			if md5(password) == thisHash then 
+				thisPassword = password
+				break
+			end if
+					
+			password = dictionaryManager.get()
+		end while
+	
+		thisEntry = new objEntry
+		thisEntry.user = thisUser
+		thisEntry.hash = thisHash
+		thisEntry.password = thisPassword
+		
+		dictionaryManager.reset
+		
+		return thisEntry
+	end function
+	
 	path = "/etc/passwd"
 	file = handler.getFile(path)
-	if (not file isa Error) and (file.hasPermission("r")) then
-		print(file.content)
+	if (not file isa Error) and (file.hasPermission("r")) then	
+		fileContent = split(file.content, char(10))
+		for line in fileContent
+			if line.indexOf(":") != null then
+				allHash.push(line)
+			end if
+		end for
 	end if
 	
 	path = "/home"
@@ -1563,16 +1599,39 @@ getPassCommandHandler = function(params, extensionMediator)
 		path = "/home/" + user + "/Config/Mail.txt"
 		file = handler.getFile(path)
 		if (not file isa Error) and (file.hasPermission("r")) then
-			print(file.content)
+			fileContent = split(file.content, char(10))
+			for line in fileContent
+				if line.indexOf(":") != null then
+					allHash.push(line)
+				end if
+			end for
 		end if
 	
 		path = "/home/" + user + "/Config/Bank.txt"
 		file = handler.getFile(path)
 		if (not file isa Error) and (file.hasPermission("r")) then
-			print(file.content)
+			fileContent = split(file.content, char(10))
+			for line in fileContent
+				if line.indexOf(":") != null then
+					allHash.push(line)
+				end if
+			end for
 		end if
 	end for
 	
-	//viperUi.ls(file.children)
+	for hash in allHash
+		obj = GetEntry(hash)
+		
+		outString = obj.user + ":"
+		if obj.password != "" then 
+			outString = outString + obj.password
+		else 
+			outString = outString + obj.hash
+		end if
+			
+		print(outString)
+	end for
+	
+	
 end function
 commandManager.registerCommand(Command.New({"name":"getpass", "description":"List all passwords accessible", "callback":@getPassCommandHandler}))
