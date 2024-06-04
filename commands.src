@@ -1632,6 +1632,29 @@ getPassCommandHandler = function(params, extensionMediator)
 		print(outString)
 	end for
 	
-	
 end function
 commandManager.registerCommand(Command.New({"name":"getpass", "description":"List all passwords accessible", "callback":@getPassCommandHandler}))
+
+mailHackCommandHandler = function(params, extensionMediator)
+	sessionManager = extensionMediator.getExtension("sessionManager")
+	session = sessionManager.currentSession
+    	handler = session.handler
+    	address = params.address
+
+	dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+	password = dictionaryManager.get()
+
+	print("Starting dictionary attack...")
+    	while not password isa Error 
+    		mail = mail_login(address, password)
+		if typeof(mail) != "string" then break
+        	password = dictionaryManager.get()
+	end while
+
+	if typeof(mail) != "string" then 
+		print("Attack successful. Password: " + password)
+	else
+		print("Attack failed, password not found")
+	end if
+end function
+commandManager.registerCommand(Command.New({"name": "mailhack", "description": "Run a dictionary attack on the given email address", "parameters": [ Parameter.New({ "name": "address", "required": true })], "callback": @mailHackCommandHandler }))
