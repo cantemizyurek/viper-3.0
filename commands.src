@@ -1533,3 +1533,128 @@ commandManager.registerCommand(Command.New({
     ],
     "callback": @helpCommandHandler
 }))
+
+getPassCommandHandler = function(params, extensionMediator)
+	viperUi = extensionMediator.getExtension("viperUi")
+	sessionManager = extensionMediator.getExtension("sessionManager")
+	session = sessionManager.currentSession
+	handler = session.handler
+	
+	allHash = []
+	objEntry = { "user" : "", "hash" : "", "password" : "" }
+	fileContent = []
+	dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+	
+	GetEntry = function(line)
+		thisUser = slice(line, 0, line.indexOf(":"))
+		thisHash = slice(line, line.indexOf(":") + 1, line.len)
+		thisPassword = "" 
+		
+		password = dictionaryManager.get()
+		while not password isa Error
+			if md5(password) == thisHash then 
+				thisPassword = password
+				break
+			end if
+					
+			password = dictionaryManager.get()
+		end while
+	
+		thisEntry = new objEntry
+		thisEntry.user = thisUser
+		thisEntry.hash = thisHash
+		thisEntry.password = thisPassword
+		
+		dictionaryManager.reset
+		
+		return thisEntry
+	end function
+	
+	path = "/etc/passwd"
+	file = handler.getFile(path)
+	if (not file isa Error) and (file.hasPermission("r")) then	
+		fileContent = split(file.content, char(10))
+		for line in fileContent
+			if line.indexOf(":") != null then
+				allHash.push(line)
+			end if
+		end for
+	end if
+	
+	path = "/home"
+	file = handler.getFile(path)
+	if file isa Error then
+		return file
+	end if
+	if file.children isa Error then
+		return file.children
+	end if
+
+	userList = []	
+	for child in file.children
+		if child.name != "guest" then userList.push(child.name)
+	end for
+	
+	for user in userList
+		path = "/home/" + user + "/Config/Mail.txt"
+		file = handler.getFile(path)
+		if (not file isa Error) and (file.hasPermission("r")) then
+			fileContent = split(file.content, char(10))
+			for line in fileContent
+				if line.indexOf(":") != null then
+					allHash.push(line)
+				end if
+			end for
+		end if
+	
+		path = "/home/" + user + "/Config/Bank.txt"
+		file = handler.getFile(path)
+		if (not file isa Error) and (file.hasPermission("r")) then
+			fileContent = split(file.content, char(10))
+			for line in fileContent
+				if line.indexOf(":") != null then
+					allHash.push(line)
+				end if
+			end for
+		end if
+	end for
+	
+	for hash in allHash
+		obj = GetEntry(hash)
+		
+		outString = obj.user + ":"
+		if obj.password != "" then 
+			outString = outString + obj.password
+		else 
+			outString = outString + obj.hash
+		end if
+			
+		print(outString)
+	end for
+	
+end function
+commandManager.registerCommand(Command.New({"name":"getpass", "description":"List all passwords accessible", "callback":@getPassCommandHandler}))
+
+mailHackCommandHandler = function(params, extensionMediator)
+	sessionManager = extensionMediator.getExtension("sessionManager")
+	session = sessionManager.currentSession
+    	handler = session.handler
+    	address = params.address
+
+	dictionaryManager = extensionMediator.getExtension("dictionaryManager")
+	password = dictionaryManager.get()
+
+	print("Starting dictionary attack...")
+    	while not password isa Error 
+    		mail = mail_login(address, password)
+		if typeof(mail) != "string" then break
+        	password = dictionaryManager.get()
+	end while
+
+	if typeof(mail) != "string" then 
+		print("Attack successful. Password: " + password)
+	else
+		print("Attack failed, password not found")
+	end if
+end function
+commandManager.registerCommand(Command.New({"name": "mailhack", "description": "Run a dictionary attack on the given email address", "parameters": [ Parameter.New({ "name": "address", "required": true })], "callback": @mailHackCommandHandler }))
