@@ -572,7 +572,7 @@ exploitScanCommandHandler = function(params, extensionMediator)
 
         handleFindPort = function(device)
             for p in device.value
-                if p.open and p.port == to_int(port) then return true
+                if (p.open or p.port == 8080) and p.port == to_int(port) then return true
             end for
             return false
         end function
